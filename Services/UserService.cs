@@ -8,6 +8,7 @@ namespace PasswordManager.Services
     {
         AuthenticateResponse Authenticate(AuthenticateRequest request);
         Task<RegisterResponse> Register(RegisterRequest request);
+        User GetById(Guid id);
     }
 
     public class UserService : IUserService
@@ -19,7 +20,6 @@ namespace PasswordManager.Services
             _repository = repository;
         }
 
-
         public AuthenticateResponse Authenticate(AuthenticateRequest request)
         {
             throw new NotImplementedException();
@@ -30,7 +30,11 @@ namespace PasswordManager.Services
         {
             var username = request.username;
 
-            if (IsUserExistingByUsername(username)) return new RegisterResponse("User already exists", null);
+            if (IsUserExistingByUsername(username)) 
+                return new RegisterResponse("User already exists", null);
+
+            if (!IsPasswordConfirmed(request.password, request.passwordConfirm)) 
+                return new RegisterResponse("Passwords do not match", null);
 
             var user = new User
             {
@@ -48,6 +52,17 @@ namespace PasswordManager.Services
         {
             var user = _repository.Users.FirstOrDefault(u => u.Username == username);
             return user != null;
+        }
+
+        private bool IsPasswordConfirmed(string password, string confirmPassword) =>
+            password == confirmPassword;
+
+        public User GetById(Guid id)
+        {
+            return new User
+            {
+                Username = "User"
+            };
         }
     }
 }

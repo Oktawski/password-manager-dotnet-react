@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PasswordManager.Authorization;
 using PasswordManager.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,10 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddDbContext<PasswordManagerContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresDb")));
+
+builder.Services.AddSingleton<IJwtHelper>(sp =>
+    new JwtHelper(builder.Configuration.GetValue<string>("Secret"))
+);
 
 builder.Services.AddControllersWithViews();
 
@@ -24,6 +29,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+app.UseMiddleware<JwtMiddleware>();
 
 app.MapControllerRoute(
     name: "default",

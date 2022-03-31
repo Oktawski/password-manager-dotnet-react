@@ -12,6 +12,7 @@ namespace PasswordManager.Entities
         [JsonIgnore]
         public string Password { get; set; } = string.Empty;
 
+        [JsonIgnore]
         public virtual List<Password> Passwords { get; set; } = new List<Password>();
     }
 }
