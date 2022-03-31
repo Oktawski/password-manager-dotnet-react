@@ -3,6 +3,8 @@
 
 appsettings.*
 
+.vscode
+
 # User-specific files
 *.suo
 *.user
