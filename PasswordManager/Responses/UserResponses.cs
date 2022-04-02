@@ -1,3 +1,4 @@
+using PasswordManager.Authorization;
 using PasswordManager.Entities;
 
 namespace PasswordManager.Responses
@@ -19,9 +20,9 @@ namespace PasswordManager.Responses
     public class RegisterResponse
     {
         public string Message { get; set; }
-        public User? User { get; set; }
+        public ApplicationUser? User { get; set; }
 
-        public RegisterResponse(string message, User? user)
+        public RegisterResponse(string message, ApplicationUser? user)
         {
             Message = message;
             User = user;

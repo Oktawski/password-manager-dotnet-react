@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using PasswordManager.Authorization;
 using Microsoft.AspNetCore.Identity;
 using PasswordManager.Services;
+using PasswordManager.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 

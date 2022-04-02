@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using PasswordManager.Authorization;
+using PasswordManager.Entities;
 using PasswordManager.Requests;
 using PasswordManager.Responses;
 
@@ -85,7 +86,7 @@ namespace PasswordManager.Services
             var result = await _userManager.CreateAsync(user);
 
             if (result.Succeeded)
-                return new RegisterResponse("User created", null);
+                return new RegisterResponse("User created", user);
 
             return new RegisterResponse("Something went wrong", null);
         }

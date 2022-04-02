@@ -1,8 +1,9 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace PasswordManager.Requests
 {
-    public record AuthenticateRequest(string username, string password);
+    public record AuthenticateRequest(
+        string username, 
+        string password
+    );
 
     public record RegisterRequest(
         string username,

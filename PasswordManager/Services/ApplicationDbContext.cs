@@ -22,6 +22,12 @@ namespace PasswordManager.Authorization
                 .HasOne(p => p.User)
                 .WithMany(u => u.Passwords)
                 .HasForeignKey(p => p.UserId);
+
+            builder.Entity<ApplicationUser>()
+                .HasMany(u => u.Passwords)
+                .WithOne(p => p.User)
+                .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }
