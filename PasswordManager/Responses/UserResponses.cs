@@ -2,7 +2,19 @@ using PasswordManager.Entities;
 
 namespace PasswordManager.Responses
 {
-    public record AuthenticateResponse(string accessToken, string refreshToken);
+    public class AuthenticateResponse
+    {
+        public string Message { get; set; } = "";
+        public string? AccessToken { get; set; }
+
+        public AuthenticateResponse(string message, string? token)
+        {
+            Message = message;
+            AccessToken = token;
+        }
+
+        public bool IsSuccess => AccessToken != null;
+    }
 
     public class RegisterResponse
     {

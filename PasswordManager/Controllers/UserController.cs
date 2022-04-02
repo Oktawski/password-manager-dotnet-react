@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PasswordManager.Requests;
@@ -7,8 +6,9 @@ using PasswordManager.Services;
 
 namespace PasswordManager.Controllers
 {
+    [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class UserController : ControllerBase 
     {
         private readonly IUserService _userService;
@@ -18,18 +18,23 @@ namespace PasswordManager.Controllers
             _userService = userService;
         }
 
-        public ActionResult<string> Test()
+        [HttpGet]
+        public ActionResult<string?> Test()
         {
-            return new OkObjectResult("It works");
+            return User.Identity?.Name;
         }
 
 
+        [AllowAnonymous]
         [HttpPost("authenticate")]
-        public ActionResult<AuthenticateResponse> Authenticate([FromBody] AuthenticateRequest request)
+        public async Task<ActionResult<AuthenticateResponse>> Authenticate([FromBody] AuthenticateRequest request)
         {
-            var authenticationResponse = _userService.Authenticate(request);
+            var response = await _userService.Authenticate(request);
 
-            return new BadRequestResult();
+            if (response.IsSuccess) 
+                return Ok(response);
+
+            return BadRequest(response);
         }
 
 
@@ -37,11 +42,12 @@ namespace PasswordManager.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<RegisterResponse>> Register([FromBody] RegisterRequest request)
         {
-            var registerResponse = await _userService.Register(request);
-
-            if (!registerResponse.IsSuccess()) return BadRequest(registerResponse);
+            var response = await _userService.Register(request);
             
-            return Ok(registerResponse);
+            if (response.IsSuccess())
+                return Ok(response);
+            
+            return BadRequest(response);
         }
-    }
+    }   
 }

@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace PasswordManager.Requests
 {
     public record AuthenticateRequest(string username, string password);

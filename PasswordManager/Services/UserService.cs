@@ -1,4 +1,9 @@
-using PasswordManager.Entities;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using PasswordManager.Authorization;
 using PasswordManager.Requests;
 using PasswordManager.Responses;
 
@@ -6,63 +11,87 @@ namespace PasswordManager.Services
 {
     public interface IUserService
     {
-        AuthenticateResponse Authenticate(AuthenticateRequest request);
+        Task<AuthenticateResponse> Authenticate(AuthenticateRequest request);
         Task<RegisterResponse> Register(RegisterRequest request);
-        User GetById(Guid id);
     }
 
     public class UserService : IUserService
     {
-        private readonly PasswordManagerContext _repository;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _repository;
+        private readonly IConfiguration _configuration;
 
-        public UserService(PasswordManagerContext repository)
+        public UserService(UserManager<ApplicationUser> userManager, ApplicationDbContext repository, IConfiguration configuration)
         {
+            _userManager = userManager;
             _repository = repository;
+            _configuration = configuration;
         }
 
-        public AuthenticateResponse Authenticate(AuthenticateRequest request)
+        public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest request)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByNameAsync(request.username);  
+            var checkPasswords = BCrypt.Net.BCrypt.Verify(request.password, user.PasswordHash);
+
+            if (user == null) 
+                return new AuthenticateResponse("User does not exist", null);
+            
+            if (!checkPasswords) 
+                return new AuthenticateResponse("Wrong password", null);
+
+            var userRoles = await _userManager.GetRolesAsync(user);  
+  
+            var authClaims = new List<Claim>  
+            {  
+                new Claim(ClaimTypes.Name, user.UserName),  
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),  
+            };  
+  
+            foreach (var userRole in userRoles)  
+            {  
+                authClaims.Add(new Claim(ClaimTypes.Role, userRole));  
+            }  
+  
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetValue<string>("Secret")));  
+  
+            var token = new JwtSecurityToken(  
+                expires: DateTime.Now.AddHours(3),  
+                claims: authClaims,  
+                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)  
+            );  
+  
+            return new AuthenticateResponse($"Hello {user.UserName}", new JwtSecurityTokenHandler().WriteToken(token));
         }
 
 
         public async Task<RegisterResponse> Register(RegisterRequest request)
         {
-            var username = request.username;
+            var userExists = await _userManager.FindByNameAsync(request.username);
 
-            if (IsUserExistingByUsername(username)) 
+            if (userExists != null)
                 return new RegisterResponse("User already exists", null);
 
-            if (!IsPasswordConfirmed(request.password, request.passwordConfirm)) 
-                return new RegisterResponse("Passwords do not match", null);
-
-            var user = new User
+            if (!ArePasswordsMatching(request.password, request.passwordConfirm))
+                return new RegisterResponse("Paswords do not match", null);
+            
+            var user = new ApplicationUser()
             {
-                Username = request.username,
-                Password = BCrypt.Net.BCrypt.HashPassword(request.password)
+                Email = request.email,
+                UserName = request.username,
+                Id = Guid.NewGuid().ToString(),
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.password)
             };
 
-            _repository.Users.Add(user);
-            await _repository.SaveChangesAsync();
+            var result = await _userManager.CreateAsync(user);
 
-            return new RegisterResponse("User created", user);
+            if (result.Succeeded)
+                return new RegisterResponse("User created", null);
+
+            return new RegisterResponse("Something went wrong", null);
         }
 
-        private bool IsUserExistingByUsername(string username)
-        {
-            var user = _repository.Users.FirstOrDefault(u => u.Username == username);
-            return user != null;
-        }
-
-        private bool IsPasswordConfirmed(string password, string confirmPassword) =>
+        public bool ArePasswordsMatching(string password, string confirmPassword) =>
             password == confirmPassword;
 
-        public User GetById(Guid id)
-        {
-            return new User
-            {
-                Username = "User"
-            };
-        }
     }
 }
