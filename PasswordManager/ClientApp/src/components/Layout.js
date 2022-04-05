@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container } from 'reactstrap';
+import { Container } from '@mui/material';
 import { NavMenu } from './NavMenu';
 
 export class Layout extends Component {
