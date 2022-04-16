@@ -1,5 +1,13 @@
 import React from 'react';
-import { FormControl, FormGroup, InputLabel, Input, FormHelperText, Button } from '@mui/material'
+import { 
+    FormControl, 
+    FormGroup, 
+    InputLabel, 
+    TextField, 
+    FormHelperText, 
+    Button, 
+    Typography
+} from '@mui/material'
 
 export class LoginPage extends React.Component {
     constructor(props) {
@@ -8,28 +16,23 @@ export class LoginPage extends React.Component {
 
     render() {
         return (
-            <div>
-                <h2>Login</h2>
+            <div sx={{ mt: 2 }}>
+                <Typography variant="h3" sx={{ textAlign: "center", my: 2 }}>Login</Typography>
                 <form>
                     <FormGroup sx={{ mx: 'auto', mt: 8, width: '50%' }}>
                         <FormControl>
-                            <InputLabel htmlFor='username'>Username</InputLabel>
-                            <Input id='username-input' aria-describedby='username-description'/>
-                            <FormHelperText id='username-description'>Type your username</FormHelperText>
+                            <TextField id='username-input' label='Username' variant='outlined'/>
                         </FormControl>
 
                         <FormControl sx={{ mt: 4 }}>
-                            <InputLabel htmlFor='password'>Password</InputLabel>
-                            <Input id='password-input' aria-describedby='password-description'/>
-                            <FormHelperText id='password-description'>Type your password</FormHelperText>
+                            <TextField id='password-input' type='password' label='Password' variant='outlined'/>
                         </FormControl>
 
-                        <Button sx={{ mt: 2, mx: 'auto', width: '50%' }} variant='contained' type='submit'>Login</Button>
+                        <Button sx={{ mt: 3, mx: 'auto', width: '50%' }} variant='contained' type='submit'>Login</Button>
 
                     </FormGroup>
                 </form>
             </div>
         );
     }
-    
 }
