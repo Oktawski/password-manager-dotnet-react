@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using PasswordManager.Authorization;
 using PasswordManager.Entities;
 
@@ -14,6 +15,7 @@ namespace PasswordManager.Responses
             AccessToken = token;
         }
 
+        [JsonIgnore]
         public bool IsSuccess => AccessToken != null;
     }
 

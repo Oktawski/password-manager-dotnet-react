@@ -32,11 +32,10 @@ namespace PasswordManager.Services
         public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest request)
         {
             var user = await _userManager.FindByNameAsync(request.username);  
-            var checkPasswords = BCrypt.Net.BCrypt.Verify(request.password, user.PasswordHash);
-
-            if (user == null) 
+            if (user is null) 
                 return new AuthenticateResponse("User does not exist", null);
-            
+
+            var checkPasswords = BCrypt.Net.BCrypt.Verify(request.password, user.PasswordHash);
             if (!checkPasswords) 
                 return new AuthenticateResponse("Wrong password", null);
 
