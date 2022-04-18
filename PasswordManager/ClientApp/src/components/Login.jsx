@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { 
     FormControl, 
     FormGroup, 
@@ -12,11 +13,17 @@ import { authenticationService } from '../services/authentication.service';
 export function LoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    
+    const history = useHistory();
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        authenticationService.login(username, password);
+        await authenticationService.login(username, password)
+        if (authenticationService.accessTokenValue != null) {
+            history.push("/");
+        }
     }
+
 
     return (
         <div sx={{ mt: 2 }}>
