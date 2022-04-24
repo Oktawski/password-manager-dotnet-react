@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { 
     FormControl, 
     FormGroup, 
@@ -54,6 +54,13 @@ export function LoginPage() {
 
                 </FormGroup>
             </form>
+
+            <Box sx={{ textAlign: "center", mt: 6 }}>
+                <Typography>Dont have an account?</Typography>
+                <Button>
+                    <Link style={{ textDecoration: 'none', color: 'inherit' }} to="/register">Register</Link>
+                </Button>
+            </Box>
         </Box>
     );
 }

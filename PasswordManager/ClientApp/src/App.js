@@ -8,6 +8,7 @@ import { LoginPage } from './components/Login';
 import { authenticationService } from './services/authentication.service';
 
 import './custom.css'
+import { RegisterPage } from './components/Register';
 
 export default class App extends Component {
   static displayName = App.name;
@@ -29,6 +30,7 @@ export default class App extends Component {
     return (
       <Layout>
         <Route path='/login' component={LoginPage} />
+        <Route path="/register" component={RegisterPage} />
         <Route exact path='/' component={Home} />
         <Route path='/counter' component={Counter} />
         <Route path='/fetch-data' component={FetchData} />
