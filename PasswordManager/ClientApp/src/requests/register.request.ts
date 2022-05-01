@@ -4,7 +4,6 @@ export class RegisterRequest {
     password: string;
     confirmPassword: string;
 
-
     constructor(username: string,
                 email: string,
                 password: string,
