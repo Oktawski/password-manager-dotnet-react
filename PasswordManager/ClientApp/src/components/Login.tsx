@@ -14,17 +14,19 @@ import { authenticationService } from '../services/authentication.service';
 export function LoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
     
     const history = useHistory();
 
     const handleSubmit = async (event: any) => {
+        setLoading(true);
         event.preventDefault();
         await authenticationService.login(username, password)
-        if (authenticationService.accessTokenValue != null) {
+        if (authenticationService.accessTokenValue !== null) {
             history.push("/");
         }
+        setLoading(false);
     }
-
 
     return (
         <Box sx={{ mt: 2 }}>

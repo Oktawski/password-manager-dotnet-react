@@ -23,17 +23,17 @@ export default class App extends Component {
   }
 
   componentDidMount() {
+    localStorage.clear();
     authenticationService.accessToken.subscribe(token => this.setState({ accessToken: token }));
   }
 
   render () {
-    const { accessToken } = this.state;
     return (
       <Layout>
         <Route path='/login' component={LoginPage} />
         <Route path="/register" component={RegisterPage} />
         <PrivateRoute exact path='/' component={Home} />
-        <Route path='/counter' component={Counter} />
+        <PrivateRoute path='/counter' component={Counter} />
         <Route path='/fetch-data' component={FetchData} />
       </Layout>
     );

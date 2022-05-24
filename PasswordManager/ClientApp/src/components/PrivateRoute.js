@@ -7,6 +7,7 @@ export { PrivateRoute };
 
 function PrivateRoute({ component: Component, ...rest }) {
     const auth = authenticationService.accessTokenValue !== null;
+    console.log(authenticationService.accessTokenValue);
     return (
         <Route {...rest} render={props => {
             if (!auth) {
