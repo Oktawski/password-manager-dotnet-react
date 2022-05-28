@@ -6,7 +6,8 @@ import {
     TextField, 
     Button, 
     Box,
-    Typography
+    Typography,
+    responsiveFontSizes
 } from '@mui/material';
 import { useState } from 'react';
 import { authenticationService } from '../services/authentication.service';
@@ -21,9 +22,11 @@ export function LoginPage() {
     const handleSubmit = async (event: any) => {
         setLoading(true);
         event.preventDefault();
-        await authenticationService.login(username, password)
-        if (authenticationService.accessTokenValue !== null) {
+        let response = await authenticationService.login(username, password)
+        if (response === 200) {
             history.push("/");
+        } else {
+            alert("Wrong credentials");
         }
         setLoading(false);
     }

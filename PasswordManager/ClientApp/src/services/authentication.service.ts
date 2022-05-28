@@ -11,7 +11,7 @@ export const authenticationService = {
     get accessTokenValue() { return accessTokenSubject.value }
 };
 
-function login(username: string, password: string) {
+function login(username: string, password: string) : Promise<number> {
     const options = {
         method: "POST",
         headers: { 
@@ -22,15 +22,19 @@ function login(username: string, password: string) {
     };
 
     return fetch("https://localhost:7265/api/User/Authenticate", options)
-        .then(response => response.json())
-        .then(body => {
-            const token = body["accessToken"];
-            localStorage.setItem("accessToken", token);
-            accessTokenSubject.next(token);
+        .then(response => {
+            if (response.ok) {
+                const body: any = response.json();
+                const token: string = body["accessToken"];
+
+                localStorage.setItem("accessToken", token);
+                accessTokenSubject.next(token);
+            }
+            return response.status;
         });
 }
 
-function register(request: RegisterRequest) {
+function register(request: RegisterRequest) : Promise<any> {
     const options = {
         method: "POST",
         headers: { 
@@ -40,13 +44,21 @@ function register(request: RegisterRequest) {
         body: JSON.stringify(request)
     };
 
+
     // return fetch("https://localhost:7265/api/User/Register", options)
-    //     .then(response => response.json())
-    //     .then(body => {
-    //         return body["message"];
+    //     .then(response => {
+    //         return response.status;
     //     });
 
-    alert(JSON.stringify(request));
+
+    return fetch("https://localhost:7265/api/User/Register", options)
+        .then(response => response.json())
+        .then(body => {
+            return {
+                message: body["message"],
+                code: 200
+            }
+        });
 }
 
 function logout() {

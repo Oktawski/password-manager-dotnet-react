@@ -2,15 +2,15 @@ export class RegisterRequest {
     username: string;
     email: string;
     password: string;
-    confirmPassword: string;
+    passwordConfirm: string;
 
     constructor(username: string,
                 email: string,
                 password: string,
-                confirmPassword:string) {
+                passwordConfirm: string) {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.confirmPassword = confirmPassword;
+        this.passwordConfirm = passwordConfirm;
     }
 }

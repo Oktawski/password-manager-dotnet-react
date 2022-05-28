@@ -22,12 +22,15 @@ export function RegisterPage() {
 
     const handleRegister = async (event: any) => {
         event.preventDefault();
-        if (password === confirmPassword) {
-            let registerRequest = new RegisterRequest(username, email, password, confirmPassword);
-            let response = await authenticationService.register(registerRequest);
-        } else {
-            alert ("Passwords should match each other (TODO pretty form validation you lazy person)");
-        }
+        if (password !== confirmPassword) {        
+            alert("Passwords do not match")
+            return;
+        }    
+
+        let registerRequest = new RegisterRequest(username, email, password, confirmPassword);
+        let response = await authenticationService.register(registerRequest);
+
+        alert(response["message"]);
     }
 
     return (
