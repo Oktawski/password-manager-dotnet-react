@@ -1,40 +1,79 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import { 
     FormControl, 
     FormGroup, 
     TextField, 
-    Button, 
     Box,
-    Typography
+    Typography,
+    Snackbar,
+    Button,
+    IconButton
 } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
+import CloseIcon from '@mui/icons-material/Close';
 import { useState } from 'react';
 import { authenticationService } from '../services/authentication.service';
 import { RegisterRequest } from '../requests/register.request';
+import { RegisterResponse } from '../responses/register.response';
 
 export function RegisterPage() {
     const [username, setUsername] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [confirmPassword, setConfirmPassword] = useState<string>("");
-
-    const history = useHistory();
+    const [loading, setLoading] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [message, setMessage] = useState("");
 
     const handleRegister = async (event: any) => {
+        setLoading(true);
         event.preventDefault();
+
         if (password !== confirmPassword) {        
             alert("Passwords do not match")
+            setLoading(false);
             return;
         }    
 
         let registerRequest = new RegisterRequest(username, email, password, confirmPassword);
-        let response = await authenticationService.register(registerRequest);
+        let response: RegisterResponse = await authenticationService.register(registerRequest);
 
-        alert(response["message"]);
+        openSnackbar(response.message);
+        setLoading(false);
     }
+
+    function openSnackbar(message: string) {
+        setOpen(true);
+        setMessage(message);
+    }
+
+    function closeSnackbar() { setOpen(false); }
+
+
+    const action = (
+    <React.Fragment>
+        <IconButton
+          size="small"
+          aria-label="close"
+          color="inherit"
+          onClick={closeSnackbar}
+        >
+            <CloseIcon fontSize="small" />
+        </IconButton>
+    </React.Fragment>
+    );
 
     return (
         <Box sx={{ mt: 2 }}>
+            <Snackbar
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                open={open}
+                autoHideDuration={6000}
+                message={message}
+                onClose={closeSnackbar}
+                action={action}
+            />
+
             <Typography variant="h3" sx={{ textAlign: "center", my: 2 }}>Register</Typography>
             <form onSubmit={ handleRegister }>
                 <FormGroup sx={{ mx: 'auto', mt: 8, width: '50%' }}>
@@ -81,11 +120,12 @@ export function RegisterPage() {
                         />
                     </FormControl>
 
-                    <Button sx={{ mt: 3, mx: 'auto', width: '50%' }} variant='contained' type='submit'>Register</Button>
+                    <LoadingButton sx={{ mt: 3, mx: 'auto', width: '50%' }} variant='contained' type='submit' loading={loading}>
+                        Register
+                    </LoadingButton>
 
                 </FormGroup>
             </form>
         </Box>
     )
 }
-

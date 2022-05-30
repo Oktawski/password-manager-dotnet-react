@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { 
     FormControl, 
@@ -6,9 +6,8 @@ import {
     TextField, 
     Button, 
     Box,
-    Typography,
-    responsiveFontSizes
-} from '@mui/material';
+    Typography} from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
 import { useState } from 'react';
 import { authenticationService } from '../services/authentication.service';
 
@@ -22,12 +21,16 @@ export function LoginPage() {
     const handleSubmit = async (event: any) => {
         setLoading(true);
         event.preventDefault();
-        let response = await authenticationService.login(username, password)
-        if (response === 200) {
+
+        let response: boolean = await authenticationService.login(username, password)
+
+        if (response) {
+            setLoading(false);
             history.push("/");
         } else {
             alert("Wrong credentials");
         }
+
         setLoading(false);
     }
 
@@ -35,29 +38,33 @@ export function LoginPage() {
         <Box sx={{ mt: 2 }}>
             <Typography variant="h3" sx={{ textAlign: "center", my: 2 }}>Login</Typography>
             <form onSubmit={ handleSubmit }>
-                <FormGroup sx={{ mx: 'auto', mt: 8, width: '50%' }}>
-                    <FormControl>
-                        <TextField id='username-input' 
-                            label='Username' 
-                            variant='outlined' 
-                            value={ username } 
-                            onChange={ e => setUsername(e.target.value )}
-                        />
-                    </FormControl>
+                <fieldset disabled={ loading }>
+                    <FormGroup sx={{ mx: 'auto', mt: 8, width: '50%' }}>
+                        <FormControl>
+                            <TextField id='username-input' 
+                                label='Username' 
+                                variant='outlined' 
+                                value={ username } 
+                                onChange={ e => setUsername(e.target.value )}
+                            />
+                        </FormControl>
 
-                    <FormControl sx={{ mt: 4 }}>
-                        <TextField id='password-input' 
-                            type='password' 
-                            label='Password' 
-                            variant='outlined' 
-                            value={ password } 
-                            onChange={ e => setPassword(e.target.value )}
-                        />
-                    </FormControl>
+                        <FormControl sx={{ mt: 4 }}>
+                            <TextField id='password-input' 
+                                type='password' 
+                                label='Password' 
+                                variant='outlined' 
+                                value={ password } 
+                                onChange={ e => setPassword(e.target.value )}
+                            />
+                        </FormControl>
 
-                    <Button sx={{ mt: 3, mx: 'auto', width: '50%' }} variant='contained' type='submit'>Login</Button>
+                        <LoadingButton sx={{ mt: 3, mx: 'auto', width: '50%' }} variant='contained' type='submit' loading={ loading }>
+                            Login
+                        </LoadingButton>
 
-                </FormGroup>
+                    </FormGroup>
+                </fieldset>
             </form>
 
             <Box sx={{ textAlign: "center", mt: 6 }}>
