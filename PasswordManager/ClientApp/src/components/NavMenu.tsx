@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -16,7 +15,9 @@ export function NavMenu() {
 
   const handleLogout = async (event: any) => {
     event.preventDefault();
+
     await authenticationService.logout();
+
     if (authenticationService.accessTokenValue === null) {
       history.push("/");
     }
@@ -39,9 +40,15 @@ export function NavMenu() {
                 <Link style={{ textDecoration: 'none', color: 'inherit' }} to="/">Home</Link>
               </Typography>
             { authenticationService.accessTokenValue === null &&
-              <Button color="inherit">
-                <Link style={{ textDecoration: 'none', color: 'inherit' }} to="/login">Login</Link>
-              </Button>
+              <Box>
+                <Button color="inherit">
+                  <Link style={{ textDecoration: 'none', color: 'inherit' }} to="/login">Login</Link>
+                </Button>
+                <Button color="inherit">
+                  <Link style={{ textDecoration: "none", color: "inherit" }} to="/register">Register</Link>
+                </Button>
+              </Box>
+              
             }
             { authenticationService.accessTokenValue !== null &&
               <Button color="inherit" onClick={ handleLogout }>Logout</Button>
