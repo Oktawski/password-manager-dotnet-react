@@ -9,7 +9,8 @@ export const authenticationService = {
     register,
     logout,
     accessToken: accessTokenSubject.asObservable(),
-    get accessTokenValue() { return accessTokenSubject.value }
+    get accessTokenValue(): string|null { return accessTokenSubject.value },
+    get isLoggedIn(): boolean { return accessTokenSubject.value !== null }
 };
 
 async function login(username: string, password: string) : Promise<boolean> {

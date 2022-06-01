@@ -76,55 +76,57 @@ export function RegisterPage() {
 
             <Typography variant="h3" sx={{ textAlign: "center", my: 2 }}>Register</Typography>
             <form onSubmit={ handleRegister }>
-                <FormGroup sx={{ mx: 'auto', mt: 8, width: '50%' }}>
-                    <FormControl>
-                        <TextField id='username-input' 
-                            label='Username' 
-                            variant='outlined' 
-                            value={ username } 
-                            onChange={ e => setUsername(e.target.value) }
-                            required
-                        />
-                    </FormControl>
+                <fieldset disabled={loading}>
+                    <FormGroup sx={{ mx: 'auto', mt: 8, width: '50%' }}>
+                        <FormControl>
+                            <TextField id='username-input' 
+                                label='Username' 
+                                variant='outlined' 
+                                value={ username } 
+                                onChange={ e => setUsername(e.target.value) }
+                                required
+                            />
+                        </FormControl>
 
-                    <FormControl sx={{ mt: 4 }}>
-                        <TextField id='email-input' 
-                            label='Email' 
-                            type="email"
-                            variant='outlined' 
-                            value={ email } 
-                            onChange={ e => setEmail(e.target.value) }
-                            required
-                        />
-                    </FormControl>
+                        <FormControl sx={{ mt: 4 }}>
+                            <TextField id='email-input' 
+                                label='Email' 
+                                type="email"
+                                variant='outlined' 
+                                value={ email } 
+                                onChange={ e => setEmail(e.target.value) }
+                                required
+                            />
+                        </FormControl>
 
-                    <FormControl sx={{ mt: 4 }}>
-                        <TextField id='password-input' 
-                            label='Password' 
-                            type="password"
-                            variant='outlined' 
-                            value={ password } 
-                            onChange={ e => setPassword(e.target.value) }
-                            required
-                        />
-                    </FormControl>
+                        <FormControl sx={{ mt: 4 }}>
+                            <TextField id='password-input' 
+                                label='Password' 
+                                type="password"
+                                variant='outlined' 
+                                value={ password } 
+                                onChange={ e => setPassword(e.target.value) }
+                                required
+                            />
+                        </FormControl>
 
-                    <FormControl sx={{ mt: 4 }}>
-                        <TextField id='confirm-password-input' 
-                            type='password' 
-                            label='Confirm Password' 
-                            variant='outlined' 
-                            value={ confirmPassword } 
-                            onChange={ e => setConfirmPassword(e.target.value) }
-                            required
-                        />
-                    </FormControl>
+                        <FormControl sx={{ mt: 4 }}>
+                            <TextField id='confirm-password-input' 
+                                type='password' 
+                                label='Confirm Password' 
+                                variant='outlined' 
+                                value={ confirmPassword } 
+                                onChange={ e => setConfirmPassword(e.target.value) }
+                                required
+                            />
+                        </FormControl>
 
-                    <LoadingButton sx={{ mt: 3, mx: 'auto', width: '50%' }} variant='contained' type='submit' loading={loading}>
-                        Register
-                    </LoadingButton>
+                        <LoadingButton sx={{ mt: 3, mx: 'auto', width: '50%' }} variant='contained' type='submit' loading={loading}>
+                            Register
+                        </LoadingButton>
 
-                </FormGroup>
+                    </FormGroup>
+                </fieldset>
             </form>
         </Box>
     )

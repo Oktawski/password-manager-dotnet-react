@@ -39,7 +39,7 @@ export function NavMenu() {
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 <Link style={{ textDecoration: 'none', color: 'inherit' }} to="/">Home</Link>
               </Typography>
-            { authenticationService.accessTokenValue === null &&
+            { !authenticationService.isLoggedIn &&
               <Box>
                 <Button color="inherit">
                   <Link style={{ textDecoration: 'none', color: 'inherit' }} to="/login">Login</Link>
@@ -48,9 +48,8 @@ export function NavMenu() {
                   <Link style={{ textDecoration: "none", color: "inherit" }} to="/register">Register</Link>
                 </Button>
               </Box>
-              
             }
-            { authenticationService.accessTokenValue !== null &&
+            { authenticationService.isLoggedIn &&
               <Button color="inherit" onClick={ handleLogout }>Logout</Button>
             }
           </Toolbar>
