@@ -1,8 +1,8 @@
 import React from 'react';
-import { 
-    FormControl, 
-    FormGroup, 
-    TextField, 
+import {
+    FormControl,
+    FormGroup,
+    TextField,
     Box,
     Typography,
     Snackbar,
@@ -29,11 +29,11 @@ export function RegisterPage() {
         setLoading(true);
         event.preventDefault();
 
-        if (password !== confirmPassword) {        
+        if (password !== confirmPassword) {
             alert("Passwords do not match")
             setLoading(false);
             return;
-        }    
+        }
 
         let registerRequest = new RegisterRequest(username, email, password, confirmPassword);
         let response: RegisterResponse = await authenticationService.register(registerRequest);
@@ -51,16 +51,16 @@ export function RegisterPage() {
 
 
     const action = (
-    <React.Fragment>
-        <IconButton
-          size="small"
-          aria-label="close"
-          color="inherit"
-          onClick={closeSnackbar}
-        >
-            <CloseIcon fontSize="small" />
-        </IconButton>
-    </React.Fragment>
+        <React.Fragment>
+            <IconButton
+                size="small"
+                aria-label="close"
+                color="inherit"
+                onClick={closeSnackbar}
+            >
+                <CloseIcon fontSize="small" />
+            </IconButton>
+        </React.Fragment>
     );
 
     return (
@@ -75,48 +75,48 @@ export function RegisterPage() {
             />
 
             <Typography variant="h3" sx={{ textAlign: "center", my: 2 }}>Register</Typography>
-            <form onSubmit={ handleRegister }>
+            <form onSubmit={handleRegister}>
                 <fieldset disabled={loading}>
                     <FormGroup sx={{ mx: 'auto', mt: 8, width: '50%' }}>
                         <FormControl>
-                            <TextField id='username-input' 
-                                label='Username' 
-                                variant='outlined' 
-                                value={ username } 
-                                onChange={ e => setUsername(e.target.value) }
+                            <TextField id='username-input'
+                                label='Username'
+                                variant='outlined'
+                                value={username}
+                                onChange={e => setUsername(e.target.value)}
                                 required
                             />
                         </FormControl>
 
                         <FormControl sx={{ mt: 4 }}>
-                            <TextField id='email-input' 
-                                label='Email' 
+                            <TextField id='email-input'
+                                label='Email'
                                 type="email"
-                                variant='outlined' 
-                                value={ email } 
-                                onChange={ e => setEmail(e.target.value) }
+                                variant='outlined'
+                                value={email}
+                                onChange={e => setEmail(e.target.value)}
                                 required
                             />
                         </FormControl>
 
                         <FormControl sx={{ mt: 4 }}>
-                            <TextField id='password-input' 
-                                label='Password' 
+                            <TextField id='password-input'
+                                label='Password'
                                 type="password"
-                                variant='outlined' 
-                                value={ password } 
-                                onChange={ e => setPassword(e.target.value) }
+                                variant='outlined'
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
                                 required
                             />
                         </FormControl>
 
                         <FormControl sx={{ mt: 4 }}>
-                            <TextField id='confirm-password-input' 
-                                type='password' 
-                                label='Confirm Password' 
-                                variant='outlined' 
-                                value={ confirmPassword } 
-                                onChange={ e => setConfirmPassword(e.target.value) }
+                            <TextField id='confirm-password-input'
+                                type='password'
+                                label='Confirm Password'
+                                variant='outlined'
+                                value={confirmPassword}
+                                onChange={e => setConfirmPassword(e.target.value)}
                                 required
                             />
                         </FormControl>
