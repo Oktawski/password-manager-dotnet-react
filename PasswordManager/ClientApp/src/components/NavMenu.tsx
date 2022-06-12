@@ -5,14 +5,16 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
 import './NavMenu.css';
 import { authenticationService } from '../services/authentication.service';
 import { useEffect, useState } from 'react';
+import { PersistentDrawerLeft } from './MainDrawer';
+import { LinkStyle } from '../helpers/Styles';
 
 export function NavMenu() {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [open, setOpen] = useState<boolean>(false);
 
     useEffect(() => {
         const subscription = authenticationService
@@ -29,40 +31,49 @@ export function NavMenu() {
 
         await authenticationService.logout();
 
+        setOpen(false);
+
         if (!isLoggedIn) {
             history.push("/");
         }
     }
 
-    const linkStyle = {
-        textDecoration: "none",
-        color: "inherit"
-    };
+    const handleDrawerOpen = () => {
+        setOpen(!open);
+    }
+
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
+            <AppBar position="relative" sx={{ zIndex: 1400 }}>
                 <Toolbar>
+                    { isLoggedIn &&
                     <IconButton
                         size="large"
                         edge="start"
                         color="inherit"
                         aria-label="menu"
+                        onClick={handleDrawerOpen}
                         sx={{ mr: 2 }}
                     >
                         <MenuIcon />
                     </IconButton>
+                    }
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        <Link style={{ textDecoration: 'none', color: 'inherit' }} to="/">Home</Link>
+                        <Link style={{ textDecoration: 'none', color: 'inherit' }} 
+                            to="/" 
+                            onClick={() => setOpen(false)}>
+                            Home
+                        </Link>
                     </Typography>
                     { !isLoggedIn &&
                         <Box>
-                            <Link style={linkStyle} to="/login">
+                            <Link style={LinkStyle} to="/login">
                                 <Button sx={{ mr: 2 }} color="inherit">
                                     Login
                                 </Button>
                             </Link>
-                            <Link style={linkStyle} to="/register">
+                            <Link style={LinkStyle} to="/register">
                                 <Button color="inherit">
                                     Register
                                 </Button>
@@ -76,6 +87,7 @@ export function NavMenu() {
                     }
                 </Toolbar>
             </AppBar>
+            <PersistentDrawerLeft open={open} handleDrawerOpen={handleDrawerOpen}/>
         </Box>
     );
 }
