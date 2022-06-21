@@ -10,7 +10,7 @@ namespace PasswordManager.Entities
         public string Value { get; set; } = string.Empty;
         
         [ForeignKey("userId")]
-        public string? UserId { get; init; }
+        public string? UserId { get; set; }
         public ApplicationUser User { get; set; } = null!;
     }
 }

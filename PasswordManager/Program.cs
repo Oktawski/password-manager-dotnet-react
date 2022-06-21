@@ -6,6 +6,7 @@ using PasswordManager.Authorization;
 using Microsoft.AspNetCore.Identity;
 using PasswordManager.Services;
 using PasswordManager.Entities;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IPasswordService, PasswordService>();
+
+builder.Services.AddTransient<ClaimsPrincipal>(sp => sp.GetService<IHttpContextAccessor>()!.HttpContext?.User!);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresDb")));

@@ -44,6 +44,7 @@ namespace PasswordManager.Services
             var authClaims = new List<Claim>  
             {  
                 new Claim(ClaimTypes.Name, user.UserName),  
+                new Claim("id", user.Id),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),  
             };  
   
@@ -59,8 +60,10 @@ namespace PasswordManager.Services
                 claims: authClaims,  
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)  
             );  
-  
-            return new AuthenticateResponse($"Hello {user.UserName}", new JwtSecurityTokenHandler().WriteToken(token));
+
+            var signedToken = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return new AuthenticateResponse($"Hello {user.UserName}", signedToken);
         }
 
 
