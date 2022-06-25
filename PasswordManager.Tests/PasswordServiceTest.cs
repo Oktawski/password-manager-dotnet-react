@@ -51,9 +51,17 @@ public class PasswordServiceTest : IDisposable
     {
         var isSuccess = await _service.Add(new Password{ Value="Test" });
 
-        Assert.Equal(true, isSuccess);
+        Assert.True(isSuccess);
 
         var passwords = db.Passwords.ToList();
         Assert.Single(passwords);
+    }
+
+    [Fact]
+    public async void Get_All()
+    {
+        var passwords = await _service.GetAll();
+
+        Assert.Empty(passwords);
     }
 }
