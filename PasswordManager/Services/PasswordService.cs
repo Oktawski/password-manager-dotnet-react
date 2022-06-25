@@ -1,6 +1,4 @@
 using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using PasswordManager.Authorization;
 using PasswordManager.Entities;
 
@@ -14,15 +12,12 @@ public interface IPasswordService
 public class PasswordService : IPasswordService
 {
     private readonly ApplicationDbContext _repository;
-    private readonly UserManager<ApplicationUser> _userManager;
     private readonly ClaimsPrincipal _claimsPrincipal;
 
     public PasswordService(ApplicationDbContext repository,
-        UserManager<ApplicationUser> userManager,
         ClaimsPrincipal claimsPrincipal)
     {
         _repository = repository;
-        _userManager = userManager;
         _claimsPrincipal = claimsPrincipal;
     }
 
