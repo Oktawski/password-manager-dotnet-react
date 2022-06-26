@@ -6,15 +6,15 @@ import {
     Box,
     Typography,
     Snackbar,
-    Button,
     IconButton
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { useState } from 'react';
-import { authenticationService } from '../services/authentication.service';
-import { RegisterRequest } from '../requests/register.request';
-import { RegisterResponse } from '../responses/register.response';
+import { RegisterRequest } from '../../requests/register.request';
+import { RegisterResponse } from '../../responses/register.response';
+import { authenticationService } from '../../services/authentication.service';
+import { Redirect } from 'react-router';
 
 export function RegisterPage() {
     const [username, setUsername] = useState<string>("");
@@ -62,6 +62,10 @@ export function RegisterPage() {
             </IconButton>
         </React.Fragment>
     );
+
+    if (authenticationService.isLoggedIn) {
+        return (<Redirect to="/"/>);
+    }
 
     return (
         <Box sx={{ mt: 2 }}>

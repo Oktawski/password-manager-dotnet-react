@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import { Link, Redirect, useHistory } from 'react-router-dom';
 import {
     FormControl,
@@ -10,7 +9,7 @@ import {
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useState } from 'react';
-import { authenticationService } from '../services/authentication.service';
+import { authenticationService } from '../../services/authentication.service';
 
 export function LoginPage() {
     const [username, setUsername] = useState("");
@@ -33,6 +32,10 @@ export function LoginPage() {
         }
 
         setLoading(false);
+    }
+
+    if (authenticationService.isLoggedIn) {
+        return (<Redirect to="/"/>);
     }
 
     return (

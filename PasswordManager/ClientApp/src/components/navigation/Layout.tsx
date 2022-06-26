@@ -1,23 +1,14 @@
-import { Container, styled } from '@mui/material';
+import { Container, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled } from '@mui/material';
 import { Link, useHistory } from 'react-router-dom';
+import { authenticationService } from '../../services/authentication.service';
+import { useEffect, useState } from 'react';
+import { DrawerWidth, LinkStyle } from '../../helpers/Styles';
+import { NavMenu } from './NavMenu';
+import CssBaseline from '@mui/material/CssBaseline';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import KeyIcon from '@mui/icons-material/Key';
 import Box from '@mui/material/Box';
 import './NavMenu.css';
-import { authenticationService } from '../services/authentication.service';
-import { useEffect, useState } from 'react';
-import { LinkStyle } from '../helpers/Styles';
-import Drawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import KeyIcon from '@mui/icons-material/Key';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { NavMenu } from './NavMenu';
-
-
-const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
     open?: boolean;
@@ -28,7 +19,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
-    marginLeft: `-${drawerWidth}px`,
+    marginLeft: `-${DrawerWidth}px`,
     ...(open && {
         transition: theme.transitions.create('margin', {
             easing: theme.transitions.easing.easeOut,
@@ -54,10 +45,10 @@ const PersistentDrawerLeft = (props: any) => {
             {props.isLoggedIn &&
                 <Drawer
                     sx={{
-                        width: drawerWidth,
+                        width: DrawerWidth,
                         flexShrink: 0,
                         '& .MuiDrawer-paper': {
-                            width: drawerWidth,
+                            width: DrawerWidth,
                             boxSizing: 'border-box',
                         },
                     }}

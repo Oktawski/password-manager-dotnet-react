@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import './NavMenu.css';
-import { LinkStyle } from '../helpers/Styles';
+import { LinkStyle } from '../../helpers/Styles';
 
 export function NavMenu(props: any) {
     return (
