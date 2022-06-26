@@ -9,13 +9,13 @@ namespace PasswordManager.Entities
         [Key]
         public Guid Id { get; set; }
 
-        private string _applciation { get; set; } = string.Empty;
+        private string _application { get; set; } = string.Empty;
         
-        public string ApplicationNormalized { get => _applciation.ToUpper(); }
+        public string ApplicationNormalized { get => _application.ToUpper(); }
         
         [Required]
         [JsonIgnore]
-        public string Application { get => _applciation; set => _applciation = value; }
+        public string Application { get => _application; set => _application = value; }
 
         [Required]
         public string Value { get; set; } = string.Empty;
