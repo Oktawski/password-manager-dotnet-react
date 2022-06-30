@@ -4,6 +4,7 @@ using System.Security.Claims;
 using PasswordManager.Authorization;
 using Microsoft.EntityFrameworkCore;
 using PasswordManager.Services;
+using PasswordManager.Requests;
 
 namespace PasswordManager.Tests;
 
@@ -29,7 +30,7 @@ public class PasswordServiceTest : IDisposable
     {
         var claims = new List<Claim>()
         {
-            new Claim("Id", "applicationUserId")
+            new Claim("id", "applicationUserId")
         };
 
         var identity = new ClaimsIdentity(claims);
@@ -49,12 +50,13 @@ public class PasswordServiceTest : IDisposable
     [Fact]
     public async void Add_Password()
     {
-        var isSuccess = await _service.Add(new Password{ Value="Test" });
+        var isSuccess = await _service.Add(new AddPasswordRequest("application", "value"));
 
         Assert.True(isSuccess);
 
         var passwords = db.Passwords.ToList();
-        Assert.Single(passwords);
+
+        Assert.NotEmpty(passwords);
     }
 
     [Fact]
