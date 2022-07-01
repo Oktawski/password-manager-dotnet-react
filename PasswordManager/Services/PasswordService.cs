@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Collections;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ public interface IPasswordService
 {
     Task<bool> Add(AddPasswordRequest password);
     Task<IEnumerable<Password>> GetAll();
+    Task<Password?> GetById(string id);
     Task<bool> Remove(Guid passwordId);
 }
 
@@ -44,9 +46,22 @@ public class PasswordService : IPasswordService
     public async Task<IEnumerable<Password>> GetAll()
     {
         var userId = GetUserId();
-        var passwords = await _repository.Passwords.Where(e => e.UserId == userId).ToListAsync();
+        var passwords = await _repository.Passwords
+            .Where(e => e.UserId == userId)
+            .ToListAsync();
 
         return passwords;
+    }
+
+    public async Task<Password?> GetById(string id)
+    {
+        var userId = GetUserId();
+
+        var password = await _repository.Passwords.FindAsync(new Guid(id));
+        if (password?.UserId == userId)
+            return password;
+        
+        return password;
     }
 
     public async Task<bool> Remove(Guid passwordId)

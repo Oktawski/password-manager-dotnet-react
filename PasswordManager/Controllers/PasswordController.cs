@@ -21,6 +21,9 @@ public class PasswordController : ControllerBase
     [HttpGet("")]
     public async Task<IEnumerable<Password>> GetAll() => await _service.GetAll();
 
+    [HttpGet("{id}")]
+    public async Task<Password?> GetById(string id) => await _service.GetById(id);
+
     [HttpPost("add")]
     public async Task<IActionResult> Add([FromBody] AddPasswordRequest request) 
     {

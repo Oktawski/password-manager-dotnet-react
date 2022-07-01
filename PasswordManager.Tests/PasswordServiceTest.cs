@@ -65,7 +65,7 @@ public class PasswordServiceTest : IDisposable
         var user = new ApplicationUser()
         {
             UserName = "test", 
-            Id = "applicationUser", 
+            Id = "applicationUserId", 
             PasswordHash = "hashedPassword" 
         };
 
@@ -120,6 +120,34 @@ public class PasswordServiceTest : IDisposable
         Assert.Equal(passwordApplication.ToUpper(), password!.ApplicationNormalized);
         Assert.Equal(passwordValue, password!.Value);
         Assert.Equal(USER_ID, password!.UserId);
-        Assert.Null(password.User);
+    }
+
+    [Fact]
+    public async void Add_Get_By_Id()
+    {
+        var passwordApplication = "application";
+        var passwordValue = "value";
+
+        var passwordToAdd = new AddPasswordRequest(passwordApplication, passwordValue);
+
+        var isSuccess = await _service.Add(passwordToAdd);
+
+        Assert.True(isSuccess);
+
+        var addedPassword = (await _service.GetAll()).FirstOrDefault();
+        Assert.NotNull(addedPassword);
+
+        var addedPasswordId = addedPassword!.Id;
+
+        var passwordById = await _service.GetById(addedPasswordId.ToString());
+        Assert.NotNull(passwordById);
+        Assert.Equal(addedPassword.ApplicationNormalized, passwordById!.ApplicationNormalized);
+    }
+
+    public async void Get_Inexisting_Password_Returns_Null()
+    {
+        var inexistingPassword = await _service.GetById("NotId");
+
+        Assert.Null(inexistingPassword);
     }
 }
