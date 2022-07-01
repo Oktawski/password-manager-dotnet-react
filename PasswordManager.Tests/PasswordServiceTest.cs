@@ -14,6 +14,10 @@ public class PasswordServiceTest : IDisposable
     private ClaimsPrincipal claimsPrincipal;
     private ApplicationDbContext db;
 
+    private const string USER_ID = "applicationUserId";
+    private const string ID_CLAIM = "id";
+
+
     public PasswordServiceTest()
     {
         claimsPrincipal = GetClaimsPrincipal();
@@ -40,7 +44,7 @@ public class PasswordServiceTest : IDisposable
     {
         var claims = new List<Claim>()
         {
-            new Claim("id", "applicationUserId")
+            new Claim(ID_CLAIM, USER_ID)
         };
 
         var identity = new ClaimsIdentity(claims);
@@ -99,7 +103,7 @@ public class PasswordServiceTest : IDisposable
     }
 
     [Fact]
-    public async void Add_Get_Password()
+    public async void Add_Get_CheckProperties_Of_Password()
     {
         var passwordApplication = "application";
         var passwordValue = "value";
@@ -111,7 +115,11 @@ public class PasswordServiceTest : IDisposable
         var password = db.Passwords.ToList().FirstOrDefault();
 
         Assert.NotNull(password);
+        Assert.IsType<Guid>(password!.Id);
         Assert.Equal(passwordApplication, password!.Application);
+        Assert.Equal(passwordApplication.ToUpper(), password!.ApplicationNormalized);
         Assert.Equal(passwordValue, password!.Value);
+        Assert.Equal(USER_ID, password!.UserId);
+        Assert.Null(password.User);
     }
 }
