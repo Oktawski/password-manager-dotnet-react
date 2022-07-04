@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using PasswordManager.Authorization;
+using PasswordManager.Services;
 using PasswordManager.Entities;
 
 namespace PasswordManager.Responses

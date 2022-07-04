@@ -2,9 +2,8 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using PasswordManager.Authorization;
-using Microsoft.AspNetCore.Identity;
 using PasswordManager.Services;
+using Microsoft.AspNetCore.Identity;
 using PasswordManager.Entities;
 using System.Security.Claims;
 
@@ -37,15 +36,15 @@ builder.Services.AddAuthentication(options =>
 .AddJwtBearer(options =>
 {
     options.SaveToken = true;  
-        options.RequireHttpsMetadata = false;  
-        options.TokenValidationParameters = new TokenValidationParameters()  
-        {  
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("Secret"))),
-            ValidateIssuer = false,  
-            ValidateAudience = false,
-            ClockSkew = TimeSpan.Zero
-        }; 
+    options.RequireHttpsMetadata = false;  
+    options.TokenValidationParameters = new TokenValidationParameters()  
+    {  
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("Secret"))),
+        ValidateIssuer = false,  
+        ValidateAudience = false,
+        ClockSkew = TimeSpan.Zero
+    }; 
 });
 
 builder.Services.AddControllersWithViews();

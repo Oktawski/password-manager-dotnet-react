@@ -19,15 +19,15 @@ public class PasswordController : ControllerBase
     }
 
     [HttpGet("")]
-    public async Task<IEnumerable<Password>> GetAll() => await _service.GetAll();
+    public async Task<IEnumerable<Password>> GetAll() => await _service.GetAllAsync();
 
     [HttpGet("{id}")]
-    public async Task<Password?> GetById(string id) => await _service.GetById(id);
+    public async Task<Password?> GetById(string id) => await _service.GetByIdAsync(id);
 
     [HttpPost("add")]
     public async Task<IActionResult> Add([FromBody] AddPasswordRequest request) 
     {
-        var added = await _service.Add(request);
+        var added = await _service.AddAsync(request);
 
         return added 
             ? Ok("Password added") 
@@ -35,9 +35,9 @@ public class PasswordController : ControllerBase
     }
 
     [HttpDelete("delete/{id}")]
-    public async Task<IActionResult> Remove(Guid id)
+    public async Task<IActionResult> Remove(string id)
     {
-        var removed = await _service.Remove(id);
+        var removed = await _service.RemoveAsync(id);
 
         return removed 
             ? Ok("Password removed") 

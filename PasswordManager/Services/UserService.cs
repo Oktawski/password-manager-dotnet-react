@@ -3,7 +3,6 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using PasswordManager.Authorization;
 using PasswordManager.Entities;
 using PasswordManager.Requests;
 using PasswordManager.Responses;
@@ -93,7 +92,7 @@ namespace PasswordManager.Services
             return new RegisterResponse("Something went wrong", null);
         }
 
-        public bool ArePasswordsMatching(string password, string confirmPassword) =>
+        private bool ArePasswordsMatching(string password, string confirmPassword) =>
             password == confirmPassword;
 
     }

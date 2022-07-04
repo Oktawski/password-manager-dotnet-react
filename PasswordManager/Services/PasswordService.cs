@@ -1,8 +1,5 @@
-using System.Diagnostics;
-using System.Collections;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
-using PasswordManager.Authorization;
 using PasswordManager.Entities;
 using PasswordManager.Requests;
 
@@ -10,10 +7,11 @@ namespace PasswordManager.Services;
 
 public interface IPasswordService
 {
-    Task<bool> Add(AddPasswordRequest password);
-    Task<IEnumerable<Password>> GetAll();
-    Task<Password?> GetById(string id);
-    Task<bool> Remove(Guid passwordId);
+    Task<bool> AddAsync(AddPasswordRequest password);
+    Task<IEnumerable<Password>> GetAllAsync();
+    Task<Password?> GetByIdAsync(string id);
+    Task<bool> EditByIdAsync(EditPasswordRequest editPasswordRequest);
+    Task<bool> RemoveAsync(string passwordId);
 }
 
 public class PasswordService : IPasswordService
@@ -27,7 +25,7 @@ public class PasswordService : IPasswordService
         _claimsPrincipal = claimsPrincipal;
     }
 
-    public async Task<bool> Add(AddPasswordRequest request)
+    public async Task<bool> AddAsync(AddPasswordRequest request)
     {
         var userId = GetUserId();
 
@@ -43,7 +41,7 @@ public class PasswordService : IPasswordService
         return changes > 0;
     }
 
-    public async Task<IEnumerable<Password>> GetAll()
+    public async Task<IEnumerable<Password>> GetAllAsync()
     {
         var userId = GetUserId();
         var passwords = await _repository.Passwords
@@ -53,7 +51,7 @@ public class PasswordService : IPasswordService
         return passwords;
     }
 
-    public async Task<Password?> GetById(string id)
+    public async Task<Password?> GetByIdAsync(string id)
     {
         var userId = GetUserId();
 
@@ -64,25 +62,40 @@ public class PasswordService : IPasswordService
         return password;
     }
 
-    public async Task<bool> Remove(Guid passwordId)
+    public async Task<bool> EditByIdAsync(EditPasswordRequest request)
     {
         var userId = GetUserId();
-        var passwordToRemove = await _repository.Passwords.FindAsync(passwordId);
 
+        var password = await FindPasswordById(request.id);
+        if (password is null)
+            return false;
+
+        password.Application = request.application;
+        password.Value = request.value;
+
+        var changes = await _repository.SaveChangesAsync();
+        return changes > 0;
+    }
+
+    public async Task<bool> RemoveAsync(string passwordId)
+    {
+        var userId = GetUserId();
+
+        var passwordToRemove = await FindPasswordById(passwordId);
         if (passwordToRemove is null)
             return false;    
 
-        if (userId == passwordToRemove?.UserId)
-        {
-            _repository.Passwords.Remove(passwordToRemove);
-
-            var changes = await _repository.SaveChangesAsync();
-
-            return changes > 0;
-        }
-
-        return false;
+        if (userId != passwordToRemove?.UserId)
+            return false;
+        
+        _repository.Passwords.Remove(passwordToRemove);
+        
+        var changes = await _repository.SaveChangesAsync();
+        return changes > 0;
     }
 
     private string GetUserId() => _claimsPrincipal.Claims.First(e => e.Type == "id").Value;
+
+    private async Task<Password?> FindPasswordById(string id) => 
+        await _repository.Passwords.FindAsync(new Guid(id));
 }

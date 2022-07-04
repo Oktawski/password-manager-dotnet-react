@@ -1,10 +1,7 @@
-using Moq;
-using PasswordManager.Entities;
 using System.Security.Claims;
-using PasswordManager.Authorization;
-using Microsoft.EntityFrameworkCore;
 using PasswordManager.Services;
 using PasswordManager.Requests;
+using PasswordManager.Entities;
 
 namespace PasswordManager.Tests;
 
@@ -14,14 +11,10 @@ public class PasswordServiceTest : IDisposable
     private ClaimsPrincipal claimsPrincipal;
     private ApplicationDbContext db;
 
-    private const string USER_ID = "applicationUserId";
-    private const string ID_CLAIM = "id";
-
-
     public PasswordServiceTest()
     {
-        claimsPrincipal = GetClaimsPrincipal();
-        db = GetInMemoryDbContext();
+        claimsPrincipal = Dependencies.GetClaimsPrincipal();
+        db = Dependencies.GetInMemoryDbContext();
 
         _service = new PasswordService(db, claimsPrincipal);
 
@@ -38,28 +31,7 @@ public class PasswordServiceTest : IDisposable
         db.Passwords.RemoveRange(passwords);
         db.SaveChanges();
     }
-
     
-    private static ClaimsPrincipal GetClaimsPrincipal()
-    {
-        var claims = new List<Claim>()
-        {
-            new Claim(ID_CLAIM, USER_ID)
-        };
-
-        var identity = new ClaimsIdentity(claims);
-        
-        return new ClaimsPrincipal(identity);
-    }
-
-    private static ApplicationDbContext GetInMemoryDbContext()
-    {
-        var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-        optionsBuilder.UseInMemoryDatabase("TestDb");
-         
-        return new ApplicationDbContext(optionsBuilder.Options);
-    }
-
     private void PopulateDb()
     {
         var user = new ApplicationUser()
@@ -72,7 +44,6 @@ public class PasswordServiceTest : IDisposable
         db.Users.Add(user);
         db.SaveChanges();
     }
-    
 
     [Fact]
     public void Get_Prepopulated_Users_Set()
@@ -85,7 +56,7 @@ public class PasswordServiceTest : IDisposable
     [Fact]
     public async void Add_Password()
     {
-        var isSuccess = await _service.Add(new AddPasswordRequest("application", "value"));
+        var isSuccess = await _service.AddAsync(new AddPasswordRequest("application", "value"));
 
         Assert.True(isSuccess);
 
@@ -97,7 +68,7 @@ public class PasswordServiceTest : IDisposable
     [Fact]
     public async void Get_All_Returns_Empty_Collection()
     {
-        var passwords = await _service.GetAll();
+        var passwords = await _service.GetAllAsync();
 
         Assert.Empty(passwords);
     }
@@ -108,7 +79,7 @@ public class PasswordServiceTest : IDisposable
         var passwordApplication = "application";
         var passwordValue = "value";
 
-        var isSuccess = await _service.Add(new AddPasswordRequest(passwordApplication, passwordValue));
+        var isSuccess = await _service.AddAsync(new AddPasswordRequest(passwordApplication, passwordValue));
 
         Assert.True(isSuccess);
 
@@ -119,7 +90,7 @@ public class PasswordServiceTest : IDisposable
         Assert.Equal(passwordApplication, password!.Application);
         Assert.Equal(passwordApplication.ToUpper(), password!.ApplicationNormalized);
         Assert.Equal(passwordValue, password!.Value);
-        Assert.Equal(USER_ID, password!.UserId);
+        Assert.Equal(Dependencies.USER_ID, password!.UserId);
     }
 
     [Fact]
@@ -130,24 +101,53 @@ public class PasswordServiceTest : IDisposable
 
         var passwordToAdd = new AddPasswordRequest(passwordApplication, passwordValue);
 
-        var isSuccess = await _service.Add(passwordToAdd);
+        var isSuccess = await _service.AddAsync(passwordToAdd);
 
         Assert.True(isSuccess);
 
-        var addedPassword = (await _service.GetAll()).FirstOrDefault();
+        var addedPassword = (await _service.GetAllAsync()).FirstOrDefault();
         Assert.NotNull(addedPassword);
 
         var addedPasswordId = addedPassword!.Id;
 
-        var passwordById = await _service.GetById(addedPasswordId.ToString());
+        var passwordById = await _service.GetByIdAsync(addedPasswordId.ToString());
         Assert.NotNull(passwordById);
         Assert.Equal(addedPassword.ApplicationNormalized, passwordById!.ApplicationNormalized);
     }
 
+    [Fact]
     public async void Get_Inexisting_Password_Returns_Null()
     {
-        var inexistingPassword = await _service.GetById("NotId");
+        await Assert.ThrowsAsync<System.FormatException>(async () => await _service.GetByIdAsync("wrong guid format"));
+
+        var notExistingId = new Guid().ToString();
+        var inexistingPassword = await _service.GetByIdAsync(notExistingId);
 
         Assert.Null(inexistingPassword);
+    }
+
+    [Fact]
+    public async void Get_Edit_Password()
+    {
+        var passwordApplication = "appBeforeUpdate";
+        var passwordValue = "valueBeforeUpdate";
+        var passwordToAdd = new AddPasswordRequest(passwordApplication, passwordValue);
+
+        var isAdded = await _service.AddAsync(passwordToAdd);
+        Assert.True(isAdded);
+
+        var addedPassword = (await _service.GetAllAsync()).First();
+
+        var editPasswordApplication = "applicationAfterUpdate";
+        var editPasswordValue = "valueAfterUpdate";
+        var editPasswordRequest = new EditPasswordRequest
+        (
+            addedPassword.Id.ToString(),
+            editPasswordApplication,
+            editPasswordValue
+        );
+
+        var isUpdated = await _service.EditByIdAsync(editPasswordRequest);
+        Assert.True(isUpdated);
     }
 }
