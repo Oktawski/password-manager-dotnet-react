@@ -28,7 +28,7 @@ async function login(username: string, password: string) : Promise<boolean> {
     const prodUrl = "https://localhost:7265/api/User/Authenticate";
     const mockUrl = "https://949b2115-bb70-427a-b8c6-0b53627d0630.mock.pstmn.io/passwordManager/login";
     
-    const response = await fetch(mockUrl, options);
+    const response = await fetch(prodUrl, options);
     const body = await response.json();
     const isSuccess = response.ok;
 

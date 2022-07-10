@@ -9,6 +9,7 @@
     "@mui/icons-material": "^5.6.1",
     "@mui/lab": "^5.0.0-alpha.83",
     "@mui/material": "^5.6.1",
+    "@mui/x-data-grid": "^5.13.0",
     "@react-rxjs/core": "^0.9.5",
     "@react-rxjs/utils": "^0.9.5",
     "@types/react-router": "^5.1.18",
