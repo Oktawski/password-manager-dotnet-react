@@ -34,6 +34,16 @@ public class PasswordController : ControllerBase
             : BadRequest("Something went wrong");
     }
 
+    [HttpPost("edit")]
+    public async Task<IActionResult> Edit([FromBody] EditPasswordRequest request)
+    {
+        var edited = await _service.EditByIdAsync(request);
+
+        return edited 
+            ? Ok("Password upadted")
+            : BadRequest("Something went wrong");
+    }
+
     [HttpDelete("delete/{id}")]
     public async Task<IActionResult> Remove(string id)
     {
