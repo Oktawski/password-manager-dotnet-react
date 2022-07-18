@@ -3,15 +3,7 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Box, Button, IconButton } from "@mui/material";
 import { Password } from "../../model/Password";
 import { passwordService } from "../../services/password.service";
-
-type MappedPassword = {
-    id: string,
-    application: string,
-    hiddenValue: string,
-    actualValue: string,
-    currentValue: string,
-    isHidden: boolean
-}
+import { MappedPassword, passwordHelper } from "./password.helper";
 
 
 export function Passwords() {
@@ -35,7 +27,7 @@ export function Passwords() {
     const actionsRow = (params: any) => {
         return (
             <Box>
-                <Button onClick={ () => showPasswordFor(params.id.toString()) }>Show</Button>
+                <Button onClick={ () => showPasswordForId(params.id.toString()) }>Show</Button>
                 <IconButton>Edit</IconButton>
                 <IconButton>Remove</IconButton>
             </Box>
@@ -46,7 +38,9 @@ export function Passwords() {
     useEffect(() => {
         const getPasswords = async () => {
             const result: Array<Password> = await passwordService.getAll();
-            const mappedPasswords = mapPasswords(result);
+            console.log(result);
+            const mappedPasswords = passwordHelper.mapPasswords(result);
+
 
             setPasswords(mappedPasswords);
 
@@ -57,40 +51,22 @@ export function Passwords() {
         getPasswords();
     }, []);
 
-
-    const mapPasswords = (passwords: Array<Password>): Array<MappedPassword> => {
-        return passwords.map<MappedPassword>(e => { 
-            let asteriskedValue = hideValue(e.value);
-
-            return { id: e.id,
-                application: e.applicationNormalized, 
-                hiddenValue: asteriskedValue,
-                actualValue: e.value,
-                currentValue: asteriskedValue,
-                isHidden: true 
-            }
-        });
-    }
-
-    const hideValue = (value: string) => { return "*".repeat(value.length); }
-
-    const showPasswordFor = (id: string) => {
+    const showPasswordForId = (id: string) => {
         console.log(id);
-        const pass: MappedPassword = passwords.find(e => e.id === id)!;
-        
-        if (pass.isHidden) {
-            pass.currentValue = pass.actualValue;
-        } else {
-            pass.currentValue = hideValue(pass.actualValue);
-        }
-        
-        pass.isHidden = !pass.isHidden;
+        const mappedPassword: MappedPassword = passwords.find(e => e.id === id)!;
 
-        const passes = passwords.map(e => e.id === id
-            ? {...e, isHidden: pass.isHidden, currentValue: pass.currentValue }
-            : e);
+        mappedPassword.isHidden 
+            ? mappedPassword.currentValue = mappedPassword.actualValue
+            : mappedPassword.currentValue = passwordHelper.hideValue(mappedPassword.actualValue);    
+        
+        mappedPassword.isHidden = !mappedPassword.isHidden;
 
-        setPasswords(passes);
+        const mappedPasswords = passwords
+            .map(password => password.id === id
+                ? {...password, isHidden: mappedPassword.isHidden, currentValue: mappedPassword.currentValue }
+                : password);
+
+        setPasswords(mappedPasswords);
     }
 
 

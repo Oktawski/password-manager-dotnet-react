@@ -1,3 +1,4 @@
+import { responsiveFontSizes } from "@mui/material";
 import { Password } from "../model/Password";
 import { AddPasswordRequest } from "../requests/password.request";
 import { authenticationService } from "./authentication.service";
