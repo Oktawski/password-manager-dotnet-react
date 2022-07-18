@@ -21,7 +21,7 @@ async function getAll(): Promise<Array<Password>> {
     const prodUrl = "https://localhost:7265/api/Password";
     const mockUrl = "https://949b2115-bb70-427a-b8c6-0b53627d0630.mock.pstmn.io/passwordManager/password/getall";
 
-    const response = await fetch(prodUrl, options);
+    const response = await fetch(mockUrl, options);
     const body: Array<Password> = await response.json();
 
     return body;
