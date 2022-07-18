@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Password } from "../model/Password";
-import { passwordService } from "../services/password.service";
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { IconButton } from "@mui/material";
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { Box, Button, IconButton } from "@mui/material";
+import { Password } from "../../model/Password";
+import { passwordService } from "../../services/password.service";
 
 type MappedPassword = {
     id: string,
@@ -25,10 +25,22 @@ export function Passwords() {
             headerName: "Actions", 
             sortable: false, 
             renderCell: (params) => {
-                return <IconButton onClick={ () => showPasswordFor(params.id.toString()) }>Show</IconButton>
+                return actionsRow(params);
             }
+            //     return <IconButton onClick={ () => showPasswordFor(params.id.toString()) }>Show</IconButton>
+            // }
         }
     ]
+
+    const actionsRow = (params: any) => {
+        return (
+            <Box>
+                <Button onClick={ () => showPasswordFor(params.id.toString()) }>Show</Button>
+                <IconButton>Edit</IconButton>
+                <IconButton>Remove</IconButton>
+            </Box>
+        );
+    }
 
 
     useEffect(() => {
@@ -88,6 +100,7 @@ export function Passwords() {
                 <div style={{ flexGrow: 1 }}>
                     <DataGrid 
                         autoHeight
+                        getRowHeight={() => 'auto'}
                         columns={columns} 
                         rows={passwords}
                     />

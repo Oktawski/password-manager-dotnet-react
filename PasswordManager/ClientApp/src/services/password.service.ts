@@ -1,19 +1,21 @@
-import { OptionUnstyled } from "@mui/base";
 import { Password } from "../model/Password";
+import { AddPasswordRequest } from "../requests/password.request";
 import { authenticationService } from "./authentication.service";
 
 export const passwordService = {
     getAll
 }
 
+const HEADERS = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Authorization": `Bearer ${authenticationService.accessTokenValue!}`
+}
+
 async function getAll(): Promise<Array<Password>> {
     const options = {
         method: "GET",
-        headers: { 
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-            "Authorization": `Bearer ${authenticationService.accessTokenValue!}`
-        }
+        headers: HEADERS
     };
 
     const prodUrl = "https://localhost:7265/api/Password";
@@ -21,6 +23,21 @@ async function getAll(): Promise<Array<Password>> {
 
     const response = await fetch(prodUrl, options);
     const body: Array<Password> = await response.json();
+
+    return body;
+}
+
+async function add(request: AddPasswordRequest): Promise<string> {
+    const options = {
+        method: "GET",
+        headers: HEADERS,
+        body: JSON.stringify(request)
+    };
+
+    const prodUrl = "https://localhost:7265/api/Password/add";
+
+    const response = await fetch(prodUrl, options);
+    const body: string = await response.json();
 
     return body;
 }

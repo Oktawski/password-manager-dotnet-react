@@ -5,9 +5,9 @@ import { Home } from './components/Home';
 import { FetchData } from './components/FetchData';
 import { Counter } from './components/Counter';
 import { LoginPage } from './components/authentication/Login';
-import { Passwords } from './components/Passwords';
 import { authenticationService } from './services/authentication.service';
 import { PrivateRoute } from './components/PrivateRoute';
+import { Passwords } from './components/passwords/Passwords';
 
 import './custom.css'
 import { RegisterPage } from './components/authentication/Register';
