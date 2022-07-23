@@ -8,7 +8,7 @@ import {
     Typography
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { authenticationService } from '../../services/authentication.service';
 
 export function LoginPage() {
@@ -33,6 +33,16 @@ export function LoginPage() {
 
         setLoading(false);
     }
+
+    // useEffect(() => {
+    //     const subscription = authenticationService.isLoggedInObservable.subscribe(isLoggedIn => {
+    //         if (isLoggedIn) {
+    //             return (<Redirect to="/"/>);
+    //         }
+    //     });
+
+    //     return () => subscription.unsubscribe();
+    // });
 
     if (authenticationService.isLoggedIn) {
         return (<Redirect to="/"/>);

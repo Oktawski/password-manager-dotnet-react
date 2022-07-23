@@ -13,14 +13,10 @@ export function AddPassword() {
         event.preventDefault();
 
         setLoading(true);
-        if (application !== "" && password !== "") {
-            console.log(application);
-            console.log(password);
             
-            
-            const response: string = await passwordService.add(new AddPasswordRequest(application, password));
-            console.log(response);
-        }
+        const response: string = await passwordService.add(new AddPasswordRequest(application, password));
+        console.log(response);
+
         setLoading(false)
     }
 
@@ -50,7 +46,7 @@ export function AddPassword() {
                 </Grid>
             
                 <Grid item xs={2}>
-                    <LoadingButton type="submit" variant="contained">
+                    <LoadingButton type="submit" variant="contained" loading={loading}>
                         Add
                     </LoadingButton>
                 </Grid>

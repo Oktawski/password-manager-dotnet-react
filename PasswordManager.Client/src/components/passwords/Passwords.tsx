@@ -1,26 +1,15 @@
 import { useEffect, useState } from "react";
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Box, Button, IconButton } from "@mui/material";
-import { Password } from "../../model/Password";
+import { Box, Button, CircularProgress, IconButton } from "@mui/material";
 import { passwordService } from "../../services/password.service";
 import { MappedPassword, passwordHelper } from "./password.helper";
 import { AddPassword } from "./AddPassword";
 
-const getPasswords = async () => {
-        const result: Array<Password> = await passwordService.getAll();
-        console.log(result);
-        const mappedPasswords = passwordHelper.mapPasswords(result);
 
-
-        // setPasswords(mappedPasswords);
-
-        console.log(mappedPasswords);
-        console.log(result);
-        return mappedPasswords;
-    };
 
 export function Passwords() {
     const [passwords, setPasswords] = useState(Array<MappedPassword>());
+    const [loading, setLoading] = useState(false);
 
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', minWidth: 70, flex: 1 },
@@ -46,15 +35,21 @@ export function Passwords() {
             </Box>
         );
     }
-    
-    
+
+    const getPasswords = async () => {
+        setLoading(true);
+        await passwordService.fetchPasswords();
+        setLoading(false);
+    };
 
     useEffect(() => {
-        const refreshPasswords = async () => {
-            setPasswords(await getPasswords());
-        }
+        getPasswords();
+        const subscription = passwordService.passwordsObservable.subscribe(passwords => {
+            const mappedPasswords = passwordHelper.mapPasswords(passwords);
+            setPasswords(mappedPasswords);
+        });
 
-        refreshPasswords();
+        return () => subscription.unsubscribe();
     }, []);
 
     const showPasswordForId = (id: string) => {
@@ -75,6 +70,17 @@ export function Passwords() {
         setPasswords(mappedPasswords);
     }
 
+    if (loading) {
+        return (
+            <Box>
+                <AddPassword />
+                <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }} >
+                    <CircularProgress />
+                </Box>
+            </Box>
+
+        )
+    }
 
     return (
         <Box>
