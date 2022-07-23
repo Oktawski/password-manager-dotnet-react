@@ -5,6 +5,7 @@ import { Password } from "../../model/Password";
 import { passwordService } from "../../services/password.service";
 import { MappedPassword, passwordHelper } from "./password.helper";
 import { AddPassword } from "./AddPassword";
+import React from "react";
 
 const getPasswords = async () => {
         const result: Array<Password> = await passwordService.getAll();
