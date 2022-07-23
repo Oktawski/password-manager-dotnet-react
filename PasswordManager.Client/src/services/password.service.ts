@@ -1,10 +1,10 @@
-import { responsiveFontSizes } from "@mui/material";
 import { Password } from "../model/Password";
 import { AddPasswordRequest } from "../requests/password.request";
 import { authenticationService } from "./authentication.service";
 
 export const passwordService = {
-    getAll
+    getAll,
+    add
 }
 
 const HEADERS = {
@@ -30,7 +30,7 @@ async function getAll(): Promise<Array<Password>> {
 
 async function add(request: AddPasswordRequest): Promise<string> {
     const options = {
-        method: "GET",
+        method: "POST",
         headers: HEADERS,
         body: JSON.stringify(request)
     };

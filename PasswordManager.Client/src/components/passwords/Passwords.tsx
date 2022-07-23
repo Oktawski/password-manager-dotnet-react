@@ -4,6 +4,7 @@ import { Box, Button, IconButton } from "@mui/material";
 import { Password } from "../../model/Password";
 import { passwordService } from "../../services/password.service";
 import { MappedPassword, passwordHelper } from "./password.helper";
+import { AddPassword } from "./AddPassword";
 
 
 export function Passwords() {
@@ -71,17 +72,20 @@ export function Passwords() {
 
 
     return (
-        <div style={{ height: 700, width: '100%' }}>
-            <div style={{ display: 'flex', height: '100%' }}>
-                <div style={{ flexGrow: 1 }}>
-                    <DataGrid 
-                        autoHeight
-                        getRowHeight={() => 'auto'}
-                        columns={columns} 
-                        rows={passwords}
-                    />
+        <Box>
+            <AddPassword/>
+            <div style={{ height: 700, width: '100%' }}>
+                <div style={{ display: 'flex', height: '100%' }}>
+                    <div style={{ flexGrow: 1 }}>
+                        <DataGrid 
+                            autoHeight
+                            getRowHeight={() => 'auto'}
+                            columns={columns} 
+                            rows={passwords}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </Box>
     )
 }
