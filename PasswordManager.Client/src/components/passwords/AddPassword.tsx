@@ -1,6 +1,5 @@
 import LoadingButton from "@mui/lab/LoadingButton";
 import { FormControl, Grid, TextField } from "@mui/material";
-import { height } from "@mui/system";
 import { useState } from "react";
 import { AddPasswordRequest } from "../../requests/password.request";
 import { passwordService } from "../../services/password.service";
@@ -10,13 +9,19 @@ export function AddPassword() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const handleAddPassword = async () => {
+    const handleAddPassword = async (event: any) => {
+        event.preventDefault();
+
         setLoading(true);
         if (application !== "" && password !== "") {
-            const response = await passwordService.add(new AddPasswordRequest(application, password));
-            console.log(response);
+            console.log(application);
+            console.log(password);
             
+            
+            const response: string = await passwordService.add(new AddPasswordRequest(application, password));
+            console.log(response);
         }
+        setLoading(false)
     }
 
     return(
@@ -27,6 +32,7 @@ export function AddPassword() {
                         <TextField label="Application"
                             value={application}
                             variant="outlined"
+                            required
                             onChange={e => setApplication(e.target.value)}
                         />
                     </FormControl>
@@ -36,6 +42,7 @@ export function AddPassword() {
                         <TextField label="Password"
                             value={password}
                             variant="outlined"
+                            required
                             onChange={e => setPassword(e.target.value)}
                             type="password"
                         />
@@ -43,7 +50,7 @@ export function AddPassword() {
                 </Grid>
             
                 <Grid item xs={2}>
-                    <LoadingButton type="submit" variant="contained" loading={loading}>
+                    <LoadingButton type="submit" variant="contained">
                         Add
                     </LoadingButton>
                 </Grid>

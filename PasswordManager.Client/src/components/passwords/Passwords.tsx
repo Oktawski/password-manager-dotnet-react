@@ -6,6 +6,18 @@ import { passwordService } from "../../services/password.service";
 import { MappedPassword, passwordHelper } from "./password.helper";
 import { AddPassword } from "./AddPassword";
 
+const getPasswords = async () => {
+        const result: Array<Password> = await passwordService.getAll();
+        console.log(result);
+        const mappedPasswords = passwordHelper.mapPasswords(result);
+
+
+        // setPasswords(mappedPasswords);
+
+        console.log(mappedPasswords);
+        console.log(result);
+        return mappedPasswords;
+    };
 
 export function Passwords() {
     const [passwords, setPasswords] = useState(Array<MappedPassword>());
@@ -34,22 +46,15 @@ export function Passwords() {
             </Box>
         );
     }
-
+    
+    
 
     useEffect(() => {
-        const getPasswords = async () => {
-            const result: Array<Password> = await passwordService.getAll();
-            console.log(result);
-            const mappedPasswords = passwordHelper.mapPasswords(result);
+        const refreshPasswords = async () => {
+            setPasswords(await getPasswords());
+        }
 
-
-            setPasswords(mappedPasswords);
-
-            console.log(mappedPasswords);
-            console.log(result);
-        };
-
-        getPasswords();
+        refreshPasswords();
     }, []);
 
     const showPasswordForId = (id: string) => {
@@ -73,7 +78,7 @@ export function Passwords() {
 
     return (
         <Box>
-            <AddPassword/>
+            <AddPassword />
             <div style={{ height: 700, width: '100%' }}>
                 <div style={{ display: 'flex', height: '100%' }}>
                     <div style={{ flexGrow: 1 }}>

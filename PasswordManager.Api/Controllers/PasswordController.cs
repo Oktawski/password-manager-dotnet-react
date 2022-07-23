@@ -19,7 +19,13 @@ public class PasswordController : ControllerBase
     }
 
     [HttpGet("")]
-    public async Task<IEnumerable<Password>> GetAll() => await _service.GetAllAsync();
+    public async Task<ActionResult<IEnumerable<Password>>> GetAll() 
+    {
+        var passwords = await _service.GetAllAsync();
+        return passwords.Count() > 0
+            ? Ok(passwords)
+            : NotFound(passwords);
+    }
 
     [HttpGet("{id}")]
     public async Task<Password?> GetById(string id) => await _service.GetByIdAsync(id);

@@ -12,6 +12,7 @@ import { Passwords } from './components/passwords/Passwords';
 import './custom.css'
 import { RegisterPage } from './components/authentication/Register';
 import { UserAccount } from './components/UserAccount';
+import { AddPassword } from './components/passwords/AddPassword';
 
 export default class App extends Component {
     static displayName = App.name;
@@ -41,6 +42,7 @@ export default class App extends Component {
                 <PrivateRoute exact path='/userAccount' component={UserAccount} />
                 <PrivateRoute exact path='/counter' component={Counter} />
                 <PrivateRoute exact path='/fetch-data' component={FetchData} />
+                <PrivateRoute exact path='/addPassword' component={AddPassword} />
             </Layout>
         );
     }
