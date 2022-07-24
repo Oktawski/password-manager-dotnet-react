@@ -1,10 +1,19 @@
+import { BehaviorSubject } from "rxjs";
 import { Password } from "../model/Password";
 import { AddPasswordRequest } from "../requests/password.request";
 import { authenticationService } from "./authentication.service";
 
+const getPasswordsSubject = new BehaviorSubject(new Array<Password>());
+
 export const passwordService = {
-    getAll,
+    passwordsObservable: getPasswordsSubject.asObservable(),
+    fetchPasswords,
     add
+}
+
+async function fetchPasswords() {
+    const passwords = await getAll();
+    getPasswordsSubject.next(passwords);
 }
 
 async function getAll(): Promise<Array<Password>> {
@@ -26,7 +35,9 @@ async function getAll(): Promise<Array<Password>> {
     return body;
 }
 
-async function add(request: AddPasswordRequest): Promise<string> {
+async function add(request: AddPasswordRequest): Promise<void> {
+    console.log(authenticationService.accessTokenValue);
+    
     const options = {
         method: "POST",
         headers: {
@@ -39,12 +50,5 @@ async function add(request: AddPasswordRequest): Promise<string> {
 
     const prodUrl = "https://localhost:7265/api/Password/add";
 
-    const response = await fetch(prodUrl, options);
-    console.log(response);
-    const body = await response.json();
-    console.log(body);
-    
-    
-
-    return body;
+    await fetch(prodUrl, options);
 }

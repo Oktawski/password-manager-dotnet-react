@@ -12,7 +12,6 @@ import { Passwords } from './components/passwords/Passwords';
 import './custom.css'
 import { RegisterPage } from './components/authentication/Register';
 import { UserAccount } from './components/UserAccount';
-import { AddPassword } from './components/passwords/AddPassword';
 
 export default class App extends Component {
     static displayName = App.name;
@@ -29,20 +28,19 @@ export default class App extends Component {
         authenticationService.accessToken.subscribe(token => {
             this.setState({ accessToken: token });
             console.log(this.state.accessToken);
-        }); 
+        });
     }
 
     render() {
         return (
             <Layout>
                 <Route path='/login' component={LoginPage} />
-                <Route path="/register" component={ RegisterPage} />
+                <Route path="/register" component={RegisterPage} />
                 <PrivateRoute exact path='/' component={Home} />
                 <PrivateRoute exact path='/passwords' component={Passwords} />
                 <PrivateRoute exact path='/userAccount' component={UserAccount} />
                 <PrivateRoute exact path='/counter' component={Counter} />
                 <PrivateRoute exact path='/fetch-data' component={FetchData} />
-                <PrivateRoute exact path='/addPassword' component={AddPassword} />
             </Layout>
         );
     }

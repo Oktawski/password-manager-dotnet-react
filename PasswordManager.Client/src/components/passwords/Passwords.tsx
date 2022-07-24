@@ -1,65 +1,33 @@
 import { useEffect, useState } from "react";
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Box, Button, IconButton } from "@mui/material";
-import { Password } from "../../model/Password";
+import { DataGrid } from '@mui/x-data-grid';
+import { Box, CircularProgress } from "@mui/material";
 import { passwordService } from "../../services/password.service";
 import { MappedPassword, passwordHelper } from "./password.helper";
 import { AddPassword } from "./AddPassword";
-import React from "react";
+import { passwordsColumns } from "./password.grid.helper";
 
-const getPasswords = async () => {
-        const result: Array<Password> = await passwordService.getAll();
-        console.log(result);
-        const mappedPasswords = passwordHelper.mapPasswords(result);
-
-
-        // setPasswords(mappedPasswords);
-
-        console.log(mappedPasswords);
-        console.log(result);
-        return mappedPasswords;
-    };
 
 export function Passwords() {
     const [passwords, setPasswords] = useState(Array<MappedPassword>());
+    const [loading, setLoading] = useState(false);
 
-    const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', minWidth: 70, flex: 1 },
-        { field: 'application', headerName: 'Application', minWidth: 130, flex: 1 },
-        { field: 'currentValue', headerName: 'Value', minWidth: 130, flex: 1, },
-        { field: "actions", 
-            headerName: "Actions", 
-            sortable: false, 
-            renderCell: (params) => {
-                return actionsRow(params);
-            }
-            //     return <IconButton onClick={ () => showPasswordFor(params.id.toString()) }>Show</IconButton>
-            // }
-        }
-    ]
-
-    const actionsRow = (params: any) => {
-        return (
-            <Box>
-                <Button onClick={ () => showPasswordForId(params.id.toString()) }>Show</Button>
-                <IconButton>Edit</IconButton>
-                <IconButton>Remove</IconButton>
-            </Box>
-        );
-    }
-    
-    
+    const getPasswords = async () => {
+        setLoading(true);
+        await passwordService.fetchPasswords();
+        setLoading(false);
+    };
 
     useEffect(() => {
-        const refreshPasswords = async () => {
-            setPasswords(await getPasswords());
-        }
+        getPasswords();
+        const subscription = passwordService.passwordsObservable.subscribe(passwords => {
+            const mappedPasswords = passwordHelper.mapPasswords(passwords);
+            setPasswords(mappedPasswords);
+        });
 
-        refreshPasswords();
+        return () => subscription.unsubscribe();
     }, []);
 
     const showPasswordForId = (id: string) => {
-        console.log(id);
         const mappedPassword: MappedPassword = passwords.find(e => e.id === id)!;
 
         mappedPassword.isHidden 
@@ -76,6 +44,17 @@ export function Passwords() {
         setPasswords(mappedPasswords);
     }
 
+    if (loading) {
+        return (
+            <Box>
+                <AddPassword />
+                <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }} >
+                    <CircularProgress />
+                </Box>
+            </Box>
+
+        )
+    }
 
     return (
         <Box>
@@ -86,7 +65,7 @@ export function Passwords() {
                         <DataGrid 
                             autoHeight
                             getRowHeight={() => 'auto'}
-                            columns={columns} 
+                            columns={passwordsColumns(showPasswordForId)} 
                             rows={passwords}
                         />
                     </div>
