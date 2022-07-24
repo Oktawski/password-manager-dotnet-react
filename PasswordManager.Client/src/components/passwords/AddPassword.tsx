@@ -14,10 +14,16 @@ export function AddPassword() {
 
         setLoading(true);
             
-        const response: string = await passwordService.add(new AddPasswordRequest(application, password));
-        console.log(response);
+        await passwordService.add(new AddPasswordRequest(application, password));
+        await passwordService.fetchPasswords();
 
+        clearForm();
         setLoading(false)
+    }
+
+    const clearForm = () => {
+        setApplication("");
+        setPassword("");
     }
 
     return(

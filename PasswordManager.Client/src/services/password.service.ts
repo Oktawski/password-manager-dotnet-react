@@ -26,16 +26,16 @@ async function getAll(): Promise<Array<Password>> {
         }
     };
 
-    // const prodUrl = "https://localhost:7265/api/Password";
-    const mockUrl = "https://949b2115-bb70-427a-b8c6-0b53627d0630.mock.pstmn.io/passwordManager/password/getall";
+    const prodUrl = "https://localhost:7265/api/Password";
+    // const mockUrl = "https://949b2115-bb70-427a-b8c6-0b53627d0630.mock.pstmn.io/passwordManager/password/getall";
 
-    const response = await fetch(mockUrl, options);
+    const response = await fetch(prodUrl, options);
     const body: Array<Password> = await response.json();
 
     return body;
 }
 
-async function add(request: AddPasswordRequest): Promise<string> {
+async function add(request: AddPasswordRequest): Promise<void> {
     console.log(authenticationService.accessTokenValue);
     
     const options = {
@@ -50,10 +50,5 @@ async function add(request: AddPasswordRequest): Promise<string> {
 
     const prodUrl = "https://localhost:7265/api/Password/add";
 
-    const response = await fetch(prodUrl, options);
-    console.log(response);
-    const body = await response.json();
-    console.log(body);
-
-    return body;
+    await fetch(prodUrl, options);
 }
