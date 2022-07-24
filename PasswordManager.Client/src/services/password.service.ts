@@ -26,7 +26,7 @@ async function getAll(): Promise<Array<Password>> {
         }
     };
 
-    const prodUrl = "https://localhost:7265/api/Password";
+    const prodUrl = "https://192.168.0.111:5050/api/Password";
     // const mockUrl = "https://949b2115-bb70-427a-b8c6-0b53627d0630.mock.pstmn.io/passwordManager/password/getall";
 
     const response = await fetch(prodUrl, options);
@@ -48,7 +48,7 @@ async function add(request: AddPasswordRequest): Promise<void> {
         body: JSON.stringify(request)
     };
 
-    const prodUrl = "https://localhost:7265/api/Password/add";
+    const prodUrl = "https://192.168.0.111:5050/api/Password/add";
 
     await fetch(prodUrl, options);
 }

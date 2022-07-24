@@ -25,7 +25,7 @@ async function login(username: string, password: string) : Promise<boolean> {
         body: JSON.stringify({ username, password })
     };
 
-    const prodUrl = "https://localhost:7265/api/User/Authenticate";
+    const prodUrl = "https://192.168.0.111:5050/api/User/Authenticate";
     // const mockUrl = "https://949b2115-bb70-427a-b8c6-0b53627d0630.mock.pstmn.io/passwordManager/login";
     
     const response = await fetch(prodUrl, options);
@@ -65,7 +65,7 @@ async function register(request: RegisterRequest) : Promise<RegisterResponse> {
         body: JSON.stringify(request)
     };
 
-    const response = await fetch("https://localhost:7265/api/User/Register", options);
+    const response = await fetch("https://192.168.0.111:5050/api/User/Register", options);
     const body = await response.json();
 
     return new RegisterResponse(response.status, response.ok, body["message"]);

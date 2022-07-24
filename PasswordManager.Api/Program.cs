@@ -9,6 +9,8 @@ using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.UseUrls("https://192.168.0.111:5050");
+
 // Add services to the container.
 
 builder.Services.AddCors();
@@ -63,7 +65,11 @@ app.UseCors(builder =>
 {
     builder.AllowAnyHeader()
         .AllowAnyMethod()
-        .WithOrigins("https://localhost:44400", "http://localhost:44400");
+        .WithOrigins("https://192.168.0.111:44400",
+            "https://192.168.0.111:5050",
+            "https://localhost:44400", 
+            "http://localhost:44400" 
+        );
 });
 
 app.UseHttpsRedirection();
