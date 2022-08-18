@@ -32,6 +32,7 @@ public class PasswordService : IPasswordService
         Password password = new()
         {
             Application = request.application,
+            Login = request.login,
             Value = request.value,
             UserId = userId
         };
@@ -71,6 +72,7 @@ public class PasswordService : IPasswordService
             return false;
 
         password.Application = request.application;
+        password.Login = request.login;
         password.Value = request.value;
 
         var changes = await _repository.SaveChangesAsync();
