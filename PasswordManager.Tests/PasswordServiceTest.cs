@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Security.Claims;
 using PasswordManager.Services;
 using PasswordManager.Requests;
@@ -56,7 +57,7 @@ public class PasswordServiceTest : IDisposable
     [Fact]
     public async void Add_Password()
     {
-        var isSuccess = await _service.AddAsync(new AddPasswordRequest("application", "value"));
+        var isSuccess = await _service.AddAsync(new AddPasswordRequest("application", "login", "value"));
 
         Assert.True(isSuccess);
 
@@ -77,9 +78,10 @@ public class PasswordServiceTest : IDisposable
     public async void Add_Get_CheckProperties_Of_Password()
     {
         var passwordApplication = "application";
+        var passwordLogin = "login";
         var passwordValue = "value";
 
-        var isSuccess = await _service.AddAsync(new AddPasswordRequest(passwordApplication, passwordValue));
+        var isSuccess = await _service.AddAsync(new AddPasswordRequest(passwordApplication, passwordLogin, passwordValue));
 
         Assert.True(isSuccess);
 
@@ -88,6 +90,7 @@ public class PasswordServiceTest : IDisposable
         Assert.NotNull(password);
         Assert.IsType<Guid>(password!.Id);
         Assert.Equal(passwordApplication, password!.Application);
+        Assert.Equal(passwordLogin, password!.Login);
         Assert.Equal(passwordApplication.ToUpper(), password!.ApplicationNormalized);
         Assert.Equal(passwordValue, password!.Value);
         Assert.Equal(Dependencies.USER_ID, password!.UserId);
@@ -97,9 +100,10 @@ public class PasswordServiceTest : IDisposable
     public async void Add_Get_By_Id()
     {
         var passwordApplication = "application";
+        var passwordLogin = "login";
         var passwordValue = "value";
 
-        var passwordToAdd = new AddPasswordRequest(passwordApplication, passwordValue);
+        var passwordToAdd = new AddPasswordRequest(passwordApplication, passwordLogin, passwordValue);
 
         var isSuccess = await _service.AddAsync(passwordToAdd);
 
@@ -113,6 +117,7 @@ public class PasswordServiceTest : IDisposable
         var passwordById = await _service.GetByIdAsync(addedPasswordId.ToString());
         Assert.NotNull(passwordById);
         Assert.Equal(addedPassword.ApplicationNormalized, passwordById!.ApplicationNormalized);
+        Assert.Equal(addedPassword.Login, passwordById!.Login);
     }
 
     [Fact]
@@ -130,8 +135,10 @@ public class PasswordServiceTest : IDisposable
     public async void Get_Edit_Password()
     {
         var passwordApplication = "appBeforeUpdate";
+        var passwordLogin = "loginBeforeUpdate";
         var passwordValue = "valueBeforeUpdate";
-        var passwordToAdd = new AddPasswordRequest(passwordApplication, passwordValue);
+
+        var passwordToAdd = new AddPasswordRequest(passwordApplication, passwordLogin, passwordValue);
 
         var isAdded = await _service.AddAsync(passwordToAdd);
         Assert.True(isAdded);
@@ -139,11 +146,14 @@ public class PasswordServiceTest : IDisposable
         var addedPassword = (await _service.GetAllAsync()).First();
 
         var editPasswordApplication = "applicationAfterUpdate";
+        var editPasswordLogin = "loginAfterUpdate";
         var editPasswordValue = "valueAfterUpdate";
+
         var editPasswordRequest = new EditPasswordRequest
         (
             addedPassword.Id.ToString(),
             editPasswordApplication,
+            editPasswordLogin,
             editPasswordValue
         );
 
