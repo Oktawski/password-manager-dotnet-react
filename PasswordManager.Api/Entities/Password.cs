@@ -18,6 +18,9 @@ namespace PasswordManager.Entities
         public string Application { get => _application; set => _application = value; }
 
         [Required]
+        public string Login { get; set; } = string.Empty;
+
+        [Required]
         public string Value { get; set; } = string.Empty;
         
         [ForeignKey("userId")]
