@@ -10,6 +10,7 @@ export const passwordsColumns = (showPassword: any): GridColDef[]  => {
     return [
         { field: 'id', headerName: 'ID', minWidth: 70, flex: 1 },
         { field: 'application', headerName: 'Application', minWidth: 130, flex: 1 },
+        { field: 'login', headerName: 'Login', minWidth: 130, flex: 1},
         { field: 'currentValue', headerName: 'Value', minWidth: 130, flex: 1, },
         {
             field: "actions",

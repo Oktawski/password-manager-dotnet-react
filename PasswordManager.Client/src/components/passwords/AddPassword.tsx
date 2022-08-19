@@ -7,6 +7,7 @@ import { passwordService } from "../../services/password.service";
 
 export function AddPassword() {
     const [application, setApplication] = useState("");
+    const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -15,7 +16,7 @@ export function AddPassword() {
 
         setLoading(true);
             
-        await passwordService.add(new AddPasswordRequest(application, password));
+        await passwordService.add(new AddPasswordRequest(application, login, password));
         await passwordService.fetchPasswords();
 
         clearForm();
@@ -24,13 +25,14 @@ export function AddPassword() {
 
     const clearForm = () => {
         setApplication("");
+        setLogin("");
         setPassword("");
     }
 
     return(
         <form onSubmit={handleAddPassword}>
             <Grid container spacing={2} paddingLeft={1} paddingRight={1} marginBottom={2}>
-                <Grid item xs={5}>
+                <Grid item xs={3}>
                     <FormControl fullWidth>
                         <TextField label="Application"
                             value={application}
@@ -40,7 +42,17 @@ export function AddPassword() {
                         />
                     </FormControl>
                 </Grid>
-                <Grid item xs={5}>
+                <Grid item xs={3}>
+                    <FormControl fullWidth>
+                        <TextField label="Login"
+                            value={login}
+                            variant="outlined"
+                            required
+                            onChange={e => setLogin(e.target.value)}
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item xs={4}>
                     <FormControl fullWidth>
                         <TextField label="Password"
                             value={password}
