@@ -49,7 +49,7 @@ export function LoginPage() {
     }
 
     return (
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 2, alignContent: "center"}}>
             <Typography variant="h3" sx={{ textAlign: "center", my: 2 }}>Login</Typography>
             <form onSubmit={handleSubmit}>
                 <fieldset disabled={loading}>
