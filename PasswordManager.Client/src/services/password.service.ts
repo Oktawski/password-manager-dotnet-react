@@ -8,8 +8,9 @@ const getPasswordsSubject = new BehaviorSubject(new Array<Password>());
 export const passwordService = {
     passwordsObservable: getPasswordsSubject.asObservable(),
     fetchPasswords,
-    add
-}
+    addAsync,
+    deleteAsync
+};
 
 async function fetchPasswords() {
     const passwords = await getAll();
@@ -35,7 +36,7 @@ async function getAll(): Promise<Array<Password>> {
     return body;
 }
 
-async function add(request: AddPasswordRequest): Promise<void> {
+async function addAsync(request: AddPasswordRequest): Promise<void> {
     console.log(authenticationService.accessTokenValue);
     
     const options = {
@@ -49,6 +50,21 @@ async function add(request: AddPasswordRequest): Promise<void> {
     };
 
     const prodUrl = "https://192.168.0.111:5050/api/Password/add";
+
+    await fetch(prodUrl, options);
+}
+
+async function deleteAsync(id: string): Promise<void> {
+    const options = {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Authorization": `Bearer ${authenticationService.accessTokenValue!}`
+        }
+    };
+
+    const prodUrl = `https://192.168.0.111:5050/api/Password/delete/${id}`
 
     await fetch(prodUrl, options);
 }

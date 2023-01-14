@@ -21,7 +21,7 @@ builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddTransient<ClaimsPrincipal>(sp => sp.GetService<IHttpContextAccessor>()!.HttpContext?.User!);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresDb")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresDb")!));
 
 builder.Services.AddSingleton<IConfiguration>(sp => builder.Configuration);
 
@@ -42,7 +42,7 @@ builder.Services.AddAuthentication(options =>
     options.TokenValidationParameters = new TokenValidationParameters()  
     {  
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("Secret"))),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("Secret")!)),
         ValidateIssuer = false,  
         ValidateAudience = false,
         ClockSkew = TimeSpan.Zero

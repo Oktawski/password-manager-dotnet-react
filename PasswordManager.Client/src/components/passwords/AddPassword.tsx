@@ -1,6 +1,5 @@
 import LoadingButton from "@mui/lab/LoadingButton";
 import { FormControl, Grid, TextField } from "@mui/material";
-import React from "react";
 import { useState } from "react";
 import { AddPasswordRequest } from "../../requests/password.request";
 import { passwordService } from "../../services/password.service";
@@ -16,18 +15,18 @@ export function AddPassword() {
 
         setLoading(true);
             
-        await passwordService.add(new AddPasswordRequest(application, login, password));
+        await passwordService.addAsync(new AddPasswordRequest(application, login, password));
         await passwordService.fetchPasswords();
 
         clearForm();
         setLoading(false)
-    }
+    };
 
     const clearForm = () => {
         setApplication("");
         setLogin("");
         setPassword("");
-    }
+    };
 
     return(
         <form onSubmit={handleAddPassword}>

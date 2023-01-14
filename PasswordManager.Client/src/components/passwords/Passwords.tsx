@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { DataGrid } from '@mui/x-data-grid';
+import * as xDataGrid from '@mui/x-data-grid';
 import { Box, CircularProgress } from "@mui/material";
 import { passwordService } from "../../services/password.service";
 import { MappedPassword, passwordHelper } from "./password.helper";
 import { AddPassword } from "./AddPassword";
-import { passwordsColumns } from "./password.grid.helper";
+import { PasswordList } from "./PasswordList";
 
 
 export function Passwords() {
@@ -44,6 +44,17 @@ export function Passwords() {
         setPasswords(mappedPasswords);
     }
 
+    const deleteByIdAsync = async (id: string) => {
+        await passwordService.deleteAsync(id);
+        await passwordService.fetchPasswords();
+    };
+
+    const passwordListProps = {
+        passwords: passwords,
+        showPassword: showPasswordForId,
+        deletePasswordAsync: deleteByIdAsync 
+    };
+
     if (loading) {
         return (
             <Box>
@@ -52,25 +63,13 @@ export function Passwords() {
                     <CircularProgress />
                 </Box>
             </Box>
-
         )
     }
 
     return (
         <Box>
             <AddPassword />
-            <div style={{ height: 700, width: '100%' }}>
-                <div style={{ display: 'flex', height: '100%' }}>
-                    <div style={{ flexGrow: 1 }}>
-                        <DataGrid 
-                            autoHeight
-                            getRowHeight={() => 'auto'}
-                            columns={passwordsColumns(showPasswordForId)} 
-                            rows={passwords}
-                        />
-                    </div>
-                </div>
-            </div>
+            <PasswordList {...passwordListProps} />
         </Box>
     )
 }
