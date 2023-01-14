@@ -5,6 +5,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import { MappedPassword } from "./password.helper";
+import { useEffect, useState } from "react";
+import { ConfirmDeletePassword } from "./ConfirmDeletePasswordDialog";
 
 
 interface PasswordsProps {
@@ -63,7 +65,7 @@ export function PasswordList(props: PasswordsProps) {
                 </Grid>
 
                 <Grid item>
-                    <Button fullWidth onClick={ () => props.deletePasswordAsync(params.id) }>
+                    <Button fullWidth onClick={ () => handleOpenConfirmDialog(params.id) }>
                         <DeleteIcon />
                         Remove
                     </Button>
@@ -72,21 +74,44 @@ export function PasswordList(props: PasswordsProps) {
         );
     };
 
+    const [open, setOpen] = useState(false);
+    const [selectedId, setSelectedId] = useState<string|null>(null);
+
+    const handleOpenConfirmDialog = (id: string) => {
+        setOpen(true);
+        setSelectedId(id);
+    };
+
+    const handleCloseConfirmDialog = () => {
+        setOpen(false);
+        setSelectedId(null);
+    };
+
+    const confirmDeletePasswordProps = {
+        deletePasswordAsync: props.deletePasswordAsync,
+        id: selectedId,
+        open: open,
+        handleClose: handleCloseConfirmDialog
+    };
+
 
     return (
-        <DataGrid 
-            autoHeight
-            getRowHeight={() => 'auto'}
-            columns={ columns } 
-            rows={ props.passwords }
-            disableColumnSelector
-            disableDensitySelector
-            components={{ Toolbar: GridToolbar }}
-            componentsProps={{
-                toolbar: {
-                showQuickFilter: true,
-                quickFilterProps: { debounceMs: 500 }
-            }}}
-        />
+        <>
+            <ConfirmDeletePassword {...confirmDeletePasswordProps}/>
+            <DataGrid 
+                autoHeight
+                getRowHeight={() => 'auto'}
+                columns={ columns } 
+                rows={ props.passwords }
+                disableColumnSelector
+                disableDensitySelector
+                components={{ Toolbar: GridToolbar }}
+                componentsProps={{
+                    toolbar: {
+                    showQuickFilter: true,
+                    quickFilterProps: { debounceMs: 500 }
+                }}}
+            />
+        </>
     )
 };
