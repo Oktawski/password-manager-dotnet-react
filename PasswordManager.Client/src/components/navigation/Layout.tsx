@@ -96,36 +96,15 @@ const PersistentDrawerLeft = (props: any) => {
 
 
 export function Layout(props: any) {
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [open, setOpen] = useState<boolean>(true);
-
-    useEffect(() => {
-        const subscription = authenticationService
-            .isLoggedInObservable
-            .subscribe(setIsLoggedIn);
-
-        subscription.unsubscribe();
-    });
-
-    const history = useHistory();
-
-    const handleLogout = async (event: any) => {
-        event.preventDefault();
-
-        await authenticationService.logout();
-
-        if (!isLoggedIn) {
-            history.push("/");
-        }
-    }
 
     const handleDrawerOpen = () => {
         setOpen(!open);
     }
     return (
         <div style={{ height: "100vh" }}>
-            <NavMenu isLoggedIn={isLoggedIn} handleDrawerOpen={handleDrawerOpen} handleLogout={handleLogout} />
-            <PersistentDrawerLeft open={open} isLoggedIn={isLoggedIn} children={props.children} />
+            <NavMenu isLoggedIn={props.isLoggedIn} handleDrawerOpen={handleDrawerOpen} />
+            <PersistentDrawerLeft open={open} isLoggedIn={props.isLoggedIn} children={props.children} />
         </div>
     );
 }

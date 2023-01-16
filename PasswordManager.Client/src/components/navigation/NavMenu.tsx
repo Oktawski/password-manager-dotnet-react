@@ -8,6 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import './NavMenu.css';
 import { LinkStyle } from '../../helpers/Styles';
+import { authenticationService } from '../../services/authentication.service';
 
 export function NavMenu(props: any) {
     return (
@@ -49,7 +50,7 @@ export function NavMenu(props: any) {
                     }
                     {props.isLoggedIn &&
                         <Box>
-                            <Button color="inherit" onClick={props.handleLogout}>Logout</Button>
+                            <Button color="inherit" onClick={authenticationService.logout}>Logout</Button>
                         </Box>
                     }
                 </Toolbar>

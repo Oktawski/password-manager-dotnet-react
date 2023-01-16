@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, useEffect, useState } from 'react';
 import { Route } from 'react-router';
 import { Layout } from './components/navigation/Layout';
 import { Home } from './components/Home';
@@ -13,35 +13,24 @@ import './custom.css'
 import { RegisterPage } from './components/authentication/Register';
 import { UserAccount } from './components/UserAccount';
 
-export default class App extends Component {
-    static displayName = App.name;
+export default function App() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    constructor(props) {
-        super(props);
+    useEffect(() => {
+        var subscription = authenticationService.isLoggedInObservable.subscribe(setIsLoggedIn);
 
-        this.state = {
-            accessToken: null
-        }
-    }
+        return () => subscription.unsubscribe();
+    });
 
-    componentDidMount() {
-        authenticationService.accessToken.subscribe(token => {
-            this.setState({ accessToken: token });
-            console.log(this.state.accessToken);
-        });
-    }
-
-    render() {
-        return (
-            <Layout>
-                <Route path='/login' component={LoginPage} />
-                <Route path="/register" component={RegisterPage} />
-                <PrivateRoute exact path='/' component={Home} />
-                <PrivateRoute exact path='/passwords' component={Passwords} />
-                <PrivateRoute exact path='/userAccount' component={UserAccount} />
-                <PrivateRoute exact path='/counter' component={Counter} />
-                <PrivateRoute exact path='/fetch-data' component={FetchData} />
-            </Layout>
-        );
-    }
+    return (
+        <Layout isLoggedIn={isLoggedIn} >
+            <Route path='/login' component={LoginPage} />
+            <Route path="/register" component={RegisterPage} />
+            <PrivateRoute exact path='/' component={Home} />
+            <PrivateRoute exact path='/passwords' component={Passwords} />
+            <PrivateRoute exact path='/userAccount' component={UserAccount} />
+            <PrivateRoute exact path='/counter' component={Counter} />
+            <PrivateRoute exact path='/fetch-data' component={FetchData} />
+        </Layout>
+    )
 }
