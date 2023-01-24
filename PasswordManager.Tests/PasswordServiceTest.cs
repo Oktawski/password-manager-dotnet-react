@@ -47,7 +47,7 @@ public class PasswordServiceTest : IDisposable
     }
 
     [Fact]
-    public void Get_Prepopulated_Users_Set()
+    public void GetPrepopulatedUsers_ShouldNotBeEmpty()
     {
         var users = db.Users.ToList();
 
@@ -55,7 +55,7 @@ public class PasswordServiceTest : IDisposable
     }
 
     [Fact]
-    public async void Add_Password()
+    public async Task AddPassword_ShouldReturnTrue()
     {
         var isSuccess = await _service.AddAsync(new AddPasswordRequest("application", "login", "value"));
 
@@ -67,7 +67,7 @@ public class PasswordServiceTest : IDisposable
     }
 
     [Fact]
-    public async void Get_All_Returns_Empty_Collection()
+    public async Task GetAllPasswords_ShouldReturnEmptyCollection()
     {
         var passwords = await _service.GetAllAsync();
 
@@ -75,7 +75,7 @@ public class PasswordServiceTest : IDisposable
     }
 
     [Fact]
-    public async void Add_Get_CheckProperties_Of_Password()
+    public async Task AddPassword_ThenGetAddedPassword_PropertiesShouldBeEqual()
     {
         var passwordApplication = "application";
         var passwordLogin = "login";
@@ -97,7 +97,7 @@ public class PasswordServiceTest : IDisposable
     }
 
     [Fact]
-    public async void Add_Get_By_Id()
+    public async Task AddPassword_ThenGetAddedPasswordById_ShouldReturnAddedPassword()
     {
         var passwordApplication = "application";
         var passwordLogin = "login";
@@ -121,7 +121,7 @@ public class PasswordServiceTest : IDisposable
     }
 
     [Fact]
-    public async void Get_Inexisting_Password_Returns_Null()
+    public async Task GetPasswordByWrongId_ShouldThrowFormatException_ThenGetPasswordByInexistingId_ShouldReturnNull()
     {
         await Assert.ThrowsAsync<System.FormatException>(async () => await _service.GetByIdAsync("wrong guid format"));
 
@@ -132,7 +132,7 @@ public class PasswordServiceTest : IDisposable
     }
 
     [Fact]
-    public async void Get_Edit_Password()
+    public async Task AddPassword_ThenGetAddedPassword_ThenEditPassword_ShouldReturnTrue()
     {
         var passwordApplication = "appBeforeUpdate";
         var passwordLogin = "loginBeforeUpdate";
