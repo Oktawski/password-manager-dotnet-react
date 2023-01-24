@@ -18,13 +18,11 @@ namespace PasswordManager.Services
     public class UserService : IUserService
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ApplicationDbContext _repository;
         private readonly IConfiguration _configuration;
 
-        public UserService(UserManager<ApplicationUser> userManager, ApplicationDbContext repository, IConfiguration configuration)
+        public UserService(UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
-            _repository = repository;
             _configuration = configuration;
         }
 
@@ -42,7 +40,7 @@ namespace PasswordManager.Services
   
             var authClaims = new List<Claim>  
             {  
-                new Claim(ClaimTypes.Name, user.UserName),  
+                new Claim(ClaimTypes.Name, user.UserName!),  
                 new Claim("id", user.Id),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),  
             };  
@@ -52,7 +50,7 @@ namespace PasswordManager.Services
                 authClaims.Add(new Claim(ClaimTypes.Role, userRole));  
             }  
   
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetValue<string>("Secret")));  
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetValue<string>("Secret")!));  
   
             var token = new JwtSecurityToken(  
                 expires: DateTime.Now.AddHours(3),  
