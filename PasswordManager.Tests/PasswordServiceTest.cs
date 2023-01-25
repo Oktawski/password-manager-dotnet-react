@@ -1,8 +1,8 @@
-using System.Reflection;
 using System.Security.Claims;
 using PasswordManager.Services;
 using PasswordManager.Requests;
 using PasswordManager.Entities;
+using PasswordManager.Tests.Configuration;
 
 namespace PasswordManager.Tests;
 
@@ -14,8 +14,8 @@ public class PasswordServiceTest : IDisposable
 
     public PasswordServiceTest()
     {
-        claimsPrincipal = Dependencies.GetClaimsPrincipal();
-        db = Dependencies.GetInMemoryDbContext();
+        claimsPrincipal = TestsConfiguration.GetClaimsPrincipal();
+        db = TestsConfiguration.GetInMemoryDbContext();
 
         _service = new PasswordService(db, claimsPrincipal);
 
@@ -93,7 +93,7 @@ public class PasswordServiceTest : IDisposable
         Assert.Equal(passwordLogin, password!.Login);
         Assert.Equal(passwordApplication.ToUpper(), password!.ApplicationNormalized);
         Assert.Equal(passwordValue, password!.Value);
-        Assert.Equal(Dependencies.USER_ID, password!.UserId);
+        Assert.Equal(Configuration.TestsConfiguration.USER_ID, password!.UserId);
     }
 
     [Fact]

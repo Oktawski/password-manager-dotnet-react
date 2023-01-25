@@ -2,8 +2,9 @@ using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using PasswordManager.Services;
 
+namespace PasswordManager.Tests.Configuration;
 
-public static class Dependencies
+public static class TestsConfiguration
 {
     public const string USER_ID = "applicationUserId";
     public const string ID_CLAIM = "id";

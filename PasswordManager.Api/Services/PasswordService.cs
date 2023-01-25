@@ -25,16 +25,18 @@ public class PasswordService : IPasswordService
         _claimsPrincipal = claimsPrincipal;
     }
 
+
+    private string UserId { get => _claimsPrincipal.Claims.First(e => e.Type == "id").Value; }
+
+
     public async Task<bool> AddAsync(AddPasswordRequest request)
     {
-        var userId = GetUserId();
-
         Password password = new()
         {
             Application = request.application,
             Login = request.login,
             Value = request.value,
-            UserId = userId
+            UserId = UserId 
         };
 
         await _repository.Passwords.AddAsync(password);
@@ -44,9 +46,8 @@ public class PasswordService : IPasswordService
 
     public async Task<IEnumerable<Password>> GetAllAsync()
     {
-        var userId = GetUserId();
         var passwords = await _repository.Passwords
-            .Where(e => e.UserId == userId)
+            .Where(e => e.UserId == UserId)
             .ToListAsync();
 
         return passwords;
@@ -54,10 +55,8 @@ public class PasswordService : IPasswordService
 
     public async Task<Password?> GetByIdAsync(string id)
     {
-        var userId = GetUserId();
-
         var password = await _repository.Passwords.FindAsync(new Guid(id));
-        if (password?.UserId == userId)
+        if (password?.UserId == UserId)
             return password;
         
         return password;
@@ -65,9 +64,7 @@ public class PasswordService : IPasswordService
 
     public async Task<bool> EditByIdAsync(EditPasswordRequest request)
     {
-        var userId = GetUserId();
-
-        var password = await FindPasswordById(request.id);
+        var password = await GetByIdAsync(request.id);
         if (password is null)
             return false;
 
@@ -81,13 +78,11 @@ public class PasswordService : IPasswordService
 
     public async Task<bool> RemoveAsync(string passwordId)
     {
-        var userId = GetUserId();
-
-        var passwordToRemove = await FindPasswordById(passwordId);
+        var passwordToRemove = await GetByIdAsync(passwordId);
         if (passwordToRemove is null)
             return false;    
 
-        if (userId != passwordToRemove?.UserId)
+        if (UserId != passwordToRemove?.UserId)
             return false;
         
         _repository.Passwords.Remove(passwordToRemove);
@@ -95,9 +90,4 @@ public class PasswordService : IPasswordService
         var changes = await _repository.SaveChangesAsync();
         return changes > 0;
     }
-
-    private string GetUserId() => _claimsPrincipal.Claims.First(e => e.Type == "id").Value;
-
-    private async Task<Password?> FindPasswordById(string id) => 
-        await _repository.Passwords.FindAsync(new Guid(id));
 }
