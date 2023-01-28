@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using PasswordManager.Entities;
+using PasswordManager.Models;
 
-namespace PasswordManager.Services;
+namespace PasswordManager.Data;
     
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {

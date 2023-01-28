@@ -2,7 +2,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using PasswordManager.Services;
+using PasswordManager.Data;
 
 namespace PasswordManager.Configuration;
 
@@ -10,8 +10,8 @@ public static class ServicesConfiguration
 {
     public static IServiceCollection AddBusinessServices(this IServiceCollection services)
     {
-        services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IPasswordService, PasswordService>();
+        services.AddScoped<IUserRepo, UserRepo>();
+        services.AddScoped<IPasswordRepo, PasswordRepo>();
 
         return services;
     }

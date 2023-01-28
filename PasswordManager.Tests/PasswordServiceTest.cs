@@ -1,14 +1,14 @@
 using System.Security.Claims;
-using PasswordManager.Services;
+using PasswordManager.Data;
+using PasswordManager.Models;
 using PasswordManager.Requests;
-using PasswordManager.Entities;
 using PasswordManager.Tests.Configuration;
 
 namespace PasswordManager.Tests;
 
 public class PasswordServiceTest : IDisposable
 {
-    private readonly PasswordService _service;
+    private readonly PasswordRepo _repo;
     private ClaimsPrincipal claimsPrincipal;
     private ApplicationDbContext db;
 
@@ -17,7 +17,7 @@ public class PasswordServiceTest : IDisposable
         claimsPrincipal = TestsConfiguration.GetClaimsPrincipal();
         db = TestsConfiguration.GetInMemoryDbContext();
 
-        _service = new PasswordService(db, claimsPrincipal);
+        _repo = new PasswordRepo(db, claimsPrincipal);
 
         PopulateDb();
     }
@@ -57,7 +57,7 @@ public class PasswordServiceTest : IDisposable
     [Fact]
     public async Task AddPassword_ShouldReturnTrue()
     {
-        var isSuccess = await _service.AddAsync(new AddPasswordRequest("application", "login", "value"));
+        var isSuccess = await _repo.AddAsync(new AddPasswordRequest("application", "login", "value"));
 
         Assert.True(isSuccess);
 
@@ -69,7 +69,7 @@ public class PasswordServiceTest : IDisposable
     [Fact]
     public async Task GetAllPasswords_ShouldReturnEmptyCollection()
     {
-        var passwords = await _service.GetAllAsync();
+        var passwords = await _repo.GetAllAsync();
 
         Assert.Empty(passwords);
     }
@@ -81,7 +81,7 @@ public class PasswordServiceTest : IDisposable
         var passwordLogin = "login";
         var passwordValue = "value";
 
-        var isSuccess = await _service.AddAsync(new AddPasswordRequest(passwordApplication, passwordLogin, passwordValue));
+        var isSuccess = await _repo.AddAsync(new AddPasswordRequest(passwordApplication, passwordLogin, passwordValue));
 
         Assert.True(isSuccess);
 
@@ -105,16 +105,16 @@ public class PasswordServiceTest : IDisposable
 
         var passwordToAdd = new AddPasswordRequest(passwordApplication, passwordLogin, passwordValue);
 
-        var isSuccess = await _service.AddAsync(passwordToAdd);
+        var isSuccess = await _repo.AddAsync(passwordToAdd);
 
         Assert.True(isSuccess);
 
-        var addedPassword = (await _service.GetAllAsync()).FirstOrDefault();
+        var addedPassword = (await _repo.GetAllAsync()).FirstOrDefault();
         Assert.NotNull(addedPassword);
 
         var addedPasswordId = addedPassword!.Id;
 
-        var passwordById = await _service.GetByIdAsync(addedPasswordId.ToString());
+        var passwordById = await _repo.GetByIdAsync(addedPasswordId.ToString());
         Assert.NotNull(passwordById);
         Assert.Equal(addedPassword.ApplicationNormalized, passwordById!.ApplicationNormalized);
         Assert.Equal(addedPassword.Login, passwordById!.Login);
@@ -123,10 +123,10 @@ public class PasswordServiceTest : IDisposable
     [Fact]
     public async Task GetPasswordByWrongId_ShouldThrowFormatException_ThenGetPasswordByInexistingId_ShouldReturnNull()
     {
-        await Assert.ThrowsAsync<System.FormatException>(async () => await _service.GetByIdAsync("wrong guid format"));
+        await Assert.ThrowsAsync<System.FormatException>(async () => await _repo.GetByIdAsync("wrong guid format"));
 
         var notExistingId = new Guid().ToString();
-        var inexistingPassword = await _service.GetByIdAsync(notExistingId);
+        var inexistingPassword = await _repo.GetByIdAsync(notExistingId);
 
         Assert.Null(inexistingPassword);
     }
@@ -140,10 +140,10 @@ public class PasswordServiceTest : IDisposable
 
         var passwordToAdd = new AddPasswordRequest(passwordApplication, passwordLogin, passwordValue);
 
-        var isAdded = await _service.AddAsync(passwordToAdd);
+        var isAdded = await _repo.AddAsync(passwordToAdd);
         Assert.True(isAdded);
 
-        var addedPassword = (await _service.GetAllAsync()).First();
+        var addedPassword = (await _repo.GetAllAsync()).First();
 
         var editPasswordApplication = "applicationAfterUpdate";
         var editPasswordLogin = "loginAfterUpdate";
@@ -157,7 +157,7 @@ public class PasswordServiceTest : IDisposable
             editPasswordValue
         );
 
-        var isUpdated = await _service.EditByIdAsync(editPasswordRequest);
+        var isUpdated = await _repo.EditByIdAsync(editPasswordRequest);
         Assert.True(isUpdated);
     }
 }

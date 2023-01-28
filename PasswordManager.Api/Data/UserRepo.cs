@@ -3,23 +3,23 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using PasswordManager.Entities;
+using PasswordManager.Models;
 using PasswordManager.Requests;
 using PasswordManager.Responses;
 
-namespace PasswordManager.Services;
+namespace PasswordManager.Data;
 
-public interface IUserService
+public interface IUserRepo
 {
     Task<AuthenticateResponse> Authenticate(AuthenticateRequest request, IConfiguration configuration);
     Task<RegisterResponse> Register(RegisterRequest request);
 }
 
-public class UserService : IUserService
+public class UserRepo : IUserRepo
 {
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public UserService(UserManager<ApplicationUser> userManager)
+    public UserRepo(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
     }

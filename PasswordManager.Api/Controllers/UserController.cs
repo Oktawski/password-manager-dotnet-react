@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PasswordManager.Data;
 using PasswordManager.Requests;
 using PasswordManager.Responses;
-using PasswordManager.Services;
 
 namespace PasswordManager.Controllers;
 
@@ -11,11 +11,11 @@ namespace PasswordManager.Controllers;
 [Route("api/[controller]")]
 public class UserController : ControllerBase 
 {
-    private readonly IUserService _userService;
+    private readonly IUserRepo _userRepo;
 
-    public UserController(IUserService userService)
+    public UserController(IUserRepo userRepo)
     {
-        _userService = userService;
+        _userRepo = userRepo;
     }
 
     [HttpGet]
@@ -25,7 +25,7 @@ public class UserController : ControllerBase
     [HttpPost("authenticate")]
     public async Task<ActionResult<AuthenticateResponse>> Authenticate(AuthenticateRequest request, IConfiguration configuration)
     {
-        var response = await _userService.Authenticate(request, configuration);
+        var response = await _userRepo.Authenticate(request, configuration);
 
         if (response.IsSuccess) 
             return Ok(response);
@@ -38,7 +38,7 @@ public class UserController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult<RegisterResponse>> Register(RegisterRequest request)
     {
-        var response = await _userService.Register(request);
+        var response = await _userRepo.Register(request);
         
         if (response.IsSuccess())
             return Ok(response);

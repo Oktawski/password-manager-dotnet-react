@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PasswordManager.Entities;
+using PasswordManager.Models;
 using PasswordManager.Requests;
-using PasswordManager.Services;
+using PasswordManager.Data;
 
 namespace PasswordManager.Controllers;
 
@@ -11,9 +11,9 @@ namespace PasswordManager.Controllers;
 [Route("api/[controller]")]
 public class PasswordController : ControllerBase
 {
-    private readonly IPasswordService _service;
+    private readonly IPasswordRepo _service;
 
-    public PasswordController(IPasswordService service)
+    public PasswordController(IPasswordRepo service)
     {
         _service = service;
     }

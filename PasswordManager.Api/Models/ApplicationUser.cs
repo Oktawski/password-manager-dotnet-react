@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 
-namespace PasswordManager.Entities;
+namespace PasswordManager.Models;
 
 public class ApplicationUser : IdentityUser
 {

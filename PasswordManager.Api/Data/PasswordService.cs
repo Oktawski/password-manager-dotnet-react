@@ -1,11 +1,11 @@
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
-using PasswordManager.Entities;
+using PasswordManager.Models;
 using PasswordManager.Requests;
 
-namespace PasswordManager.Services;
+namespace PasswordManager.Data;
 
-public interface IPasswordService
+public interface IPasswordRepo
 {
     Task<bool> AddAsync(AddPasswordRequest password);
     Task<IEnumerable<Password>> GetAllAsync();
@@ -14,12 +14,12 @@ public interface IPasswordService
     Task<bool> RemoveAsync(string passwordId);
 }
 
-public class PasswordService : IPasswordService
+public class PasswordRepo : IPasswordRepo
 {
     private readonly ApplicationDbContext _repository;
     private readonly ClaimsPrincipal _claimsPrincipal;
 
-    public PasswordService(ApplicationDbContext repository, ClaimsPrincipal claimsPrincipal)
+    public PasswordRepo(ApplicationDbContext repository, ClaimsPrincipal claimsPrincipal)
     {
         _repository = repository;
         _claimsPrincipal = claimsPrincipal;
@@ -27,6 +27,13 @@ public class PasswordService : IPasswordService
 
 
     private string UserId { get => _claimsPrincipal.Claims.First(e => e.Type == "id").Value; }
+
+
+    public void Test()
+    {
+        var buba = _repository.Passwords.Where(e => e.Id == new Guid())
+        .ToList();
+    }
 
 
     public async Task<bool> AddAsync(AddPasswordRequest request)

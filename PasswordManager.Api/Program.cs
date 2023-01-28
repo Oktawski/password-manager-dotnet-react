@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using PasswordManager.Services;
 using Microsoft.AspNetCore.Identity;
-using PasswordManager.Entities;
 using PasswordManager.Configuration;
+using PasswordManager.Data;
+using PasswordManager.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

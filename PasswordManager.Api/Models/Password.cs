@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace PasswordManager.Entities;
+namespace PasswordManager.Models;
 
 public class Password
 {
