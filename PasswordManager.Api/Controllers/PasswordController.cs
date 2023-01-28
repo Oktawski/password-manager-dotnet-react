@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PasswordManager.Models;
 using PasswordManager.Requests;
 using PasswordManager.Data;
+using PasswordManager.Dtos;
 
 namespace PasswordManager.Controllers;
 
@@ -11,29 +12,29 @@ namespace PasswordManager.Controllers;
 [Route("api/[controller]")]
 public class PasswordController : ControllerBase
 {
-    private readonly IPasswordRepo _service;
+    private readonly IPasswordRepo _repository;
 
-    public PasswordController(IPasswordRepo service)
+    public PasswordController(IPasswordRepo repository)
     {
-        _service = service;
+        _repository = repository;
     }
 
     [HttpGet("")]
     public async Task<ActionResult<IEnumerable<Password>>> GetAll() 
     {
-        var passwords = await _service.GetAllAsync();
+        var passwords = await _repository.GetAllAsync();
         return passwords.Count() > 0
             ? Ok(passwords)
             : NotFound(passwords);
     }
 
     [HttpGet("{id}")]
-    public async Task<Password?> GetById(string id) => await _service.GetByIdAsync(id);
+    public async Task<Password?> GetById(string id) => await _repository.GetByIdAsync(new Guid(id));
 
-    [HttpPost("add")]
-    public async Task<IActionResult> Add([FromBody] AddPasswordRequest request) 
+    [HttpPost]
+    public async Task<IActionResult> Add(PasswordCreateDto createDto) 
     {
-        var added = await _service.AddAsync(request);
+        var added = await _repository.AddAsync(createDto);
 
         return added 
             ? Ok("Password added") 
@@ -41,9 +42,9 @@ public class PasswordController : ControllerBase
     }
 
     [HttpPost("edit")]
-    public async Task<IActionResult> Edit([FromBody] EditPasswordRequest request)
+    public async Task<IActionResult> Edit(PasswordEditDto editDto)
     {
-        var edited = await _service.EditByIdAsync(request);
+        var edited = await _repository.EditByIdAsync(editDto);
 
         return edited 
             ? Ok("Password upadted")
@@ -53,7 +54,7 @@ public class PasswordController : ControllerBase
     [HttpDelete("delete/{id}")]
     public async Task<IActionResult> Remove(string id)
     {
-        var removed = await _service.RemoveAsync(id);
+        var removed = await _repository.RemoveAsync(new Guid(id));
 
         return removed 
             ? Ok("Password removed") 

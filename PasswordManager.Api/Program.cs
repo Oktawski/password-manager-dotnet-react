@@ -22,6 +22,8 @@ builder.Services
     .AddBusinessServices()
     .AddClaimsPrincipal();
 
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 builder.Services.AddControllers();
 
 var app = builder.Build();

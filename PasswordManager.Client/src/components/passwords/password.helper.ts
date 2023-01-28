@@ -21,7 +21,7 @@ function mapPasswords(passwords: Array<Password>): Array<MappedPassword> {
 
         return { 
             id: e.id,
-            application: e.applicationNormalized, 
+            application: e.application, 
             login: e.login,
             hiddenValue: asteriskedValue,
             actualValue: e.value,

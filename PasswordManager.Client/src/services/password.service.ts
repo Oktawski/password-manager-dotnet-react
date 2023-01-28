@@ -49,7 +49,7 @@ async function addAsync(request: AddPasswordRequest): Promise<void> {
         body: JSON.stringify(request)
     };
 
-    const prodUrl = "https://192.168.0.111:5050/api/Password/add";
+    const prodUrl = "https://192.168.0.111:5050/api/Password";
 
     await fetch(prodUrl, options);
 }

@@ -1,6 +1,6 @@
 export type Password = {
     id: string,
-    applicationNormalized: string,
+    application: string,
     login: string,
     value: string
 }
