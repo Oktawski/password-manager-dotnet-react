@@ -1,36 +1,39 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using PasswordManager.Models;
-using PasswordManager.Requests;
 using PasswordManager.Responses;
 
 namespace PasswordManager.Data;
 
 public interface IUserRepo
 {
-    Task<AuthenticateResponse> Authenticate(AuthenticateRequest request, IConfiguration configuration);
-    Task<RegisterResponse> Register(RegisterRequest request);
+    Task<AuthenticateResponse> Authenticate(UserAuthenticateDto authenticateDto, IConfiguration configuration);
+    Task<RegisterResponse> Register(UserCreateDto createDto);
 }
 
 public class UserRepo : IUserRepo
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IMapper _mapper;
 
-    public UserRepo(UserManager<ApplicationUser> userManager)
+    public UserRepo(UserManager<ApplicationUser> userManager,
+        IMapper mapper)
     {
         _userManager = userManager;
+        _mapper = mapper;
     }
 
-    public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest request, IConfiguration configuration)
+    public async Task<AuthenticateResponse> Authenticate(UserAuthenticateDto authenticateDto, IConfiguration configuration)
     {
-        var user = await _userManager.FindByNameAsync(request.username);  
+        var user = await _userManager.FindByNameAsync(authenticateDto.Username);  
         if (user is null) 
             return new AuthenticateResponse("User does not exist", null);
 
-        if (!VerifyPassword(request.password, user.PasswordHash)) 
+        if (!VerifyPassword(authenticateDto.Password, user.PasswordHash)) 
             return new AuthenticateResponse("Wrong password", null);
 
         var userRoles = await _userManager.GetRolesAsync(user);  
@@ -65,17 +68,17 @@ public class UserRepo : IUserRepo
     );
 
 
-    public async Task<RegisterResponse> Register(RegisterRequest request)
+    public async Task<RegisterResponse> Register(UserCreateDto createDto)
     {
-        var userExists = await _userManager.FindByNameAsync(request.username);
+        var userExists = await _userManager.FindByNameAsync(createDto.Username);
 
         if (userExists != null)
             return new RegisterResponse("User already exists", null);
 
-        if (!ArePasswordsMatching(request.password, request.passwordConfirm))
+        if (!ArePasswordsMatching(createDto.Password, createDto.PasswordConfirm))
             return new RegisterResponse("Paswords do not match", null);
         
-        var user = CreateUserFromRequest(request); 
+        var user = _mapper.Map<UserCreateDto, ApplicationUser>(createDto);
 
         var result = await _userManager.CreateAsync(user);
 
@@ -87,11 +90,5 @@ public class UserRepo : IUserRepo
     private bool ArePasswordsMatching(string password, string confirmPassword) =>
         password == confirmPassword;
 
-    private ApplicationUser CreateUserFromRequest(RegisterRequest request) => new ()
-    {
-        Email = request.email,
-        UserName = request.username,
-        Id = Guid.NewGuid().ToString(),
-        PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.password)
-    };
+
 }

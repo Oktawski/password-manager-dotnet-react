@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PasswordManager.Models;
-using PasswordManager.Requests;
 using PasswordManager.Data;
 using PasswordManager.Dtos;
 

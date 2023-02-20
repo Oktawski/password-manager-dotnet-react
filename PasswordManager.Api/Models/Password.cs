@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace PasswordManager.Models;
 
@@ -14,7 +13,6 @@ public class Password
     public string ApplicationNormalized { get => _application.ToUpper(); }
     
     [Required]
-    [JsonIgnore]
     public string Application { get => _application; set => _application = value; }
 
     [Required]
@@ -24,9 +22,7 @@ public class Password
     public string Value { get; set; } = string.Empty;
     
     [ForeignKey("userId")]
-    [JsonIgnore]
     public string? UserId { get; set; }
     
-    [JsonIgnore]
     public ApplicationUser User { get; set; } = null!;
 }
