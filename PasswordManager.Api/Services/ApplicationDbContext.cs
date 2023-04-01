@@ -2,16 +2,14 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PasswordManager.Models;
 
-namespace PasswordManager.Data;
+namespace PasswordManager.Services;
     
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
     public DbSet<Password> Passwords { get; set; } = null!;
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-
-    }
+    { }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

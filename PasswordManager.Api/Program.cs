@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using PasswordManager.Configuration;
-using PasswordManager.Data;
 using PasswordManager.Models;
+using PasswordManager.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,9 +18,11 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddDefaultTokenProviders();
 
 builder.Services
+    .ConfigureSecretOptions(builder.Configuration)
     .AddJwtAuthentication(builder.Configuration)
     .AddBusinessServices()
-    .AddClaimsPrincipal();
+    .AddClaimsPrincipal()
+    .AddTokenService();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

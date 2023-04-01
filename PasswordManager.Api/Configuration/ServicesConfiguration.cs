@@ -2,7 +2,8 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using PasswordManager.Data;
+using PasswordManager.Services;
+using PasswordManager.Services.Authentication;
 
 namespace PasswordManager.Configuration;
 
@@ -10,8 +11,8 @@ public static class ServicesConfiguration
 {
     public static IServiceCollection AddBusinessServices(this IServiceCollection services)
     {
-        services.AddScoped<IUserRepo, UserRepo>();
-        services.AddScoped<IPasswordRepo, PasswordRepo>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IPasswordService, PasswordService>();
 
         return services;
     }
@@ -46,6 +47,22 @@ public static class ServicesConfiguration
                 ClockSkew = TimeSpan.Zero
             }; 
         });
+
+        return services;
+    }
+
+    public static IServiceCollection ConfigureSecretOptions(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<SecretOptions>(
+            configuration.GetSection("SecretOptions")
+        );
+
+        return services;
+    }
+
+    public static IServiceCollection AddTokenService(this IServiceCollection services)
+    {
+        services.AddScoped<TokenService>();
 
         return services;
     }

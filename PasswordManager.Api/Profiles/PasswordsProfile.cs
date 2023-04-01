@@ -9,6 +9,7 @@ public class PasswordsProfile : AutoMapper.Profile
     {
         CreateMap<Password, PasswordReadDto>()
             .ForMember(e => e.Application, t => t.MapFrom(map => map.ApplicationNormalized));
+
         CreateMap<PasswordCreateDto, Password>();
     }
 }

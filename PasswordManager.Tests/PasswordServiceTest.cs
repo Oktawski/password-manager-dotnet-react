@@ -1,43 +1,42 @@
-using System.Runtime.InteropServices;
 using System.Security.Claims;
 using AutoMapper;
-using PasswordManager.Data;
 using PasswordManager.Dtos;
 using PasswordManager.Models;
 using PasswordManager.Profiles;
+using PasswordManager.Services;
 using PasswordManager.Tests.Configuration;
 
 namespace PasswordManager.Tests;
 
 public class PasswordServiceTest : IDisposable
 {
-    private readonly PasswordRepo _repo;
+    private readonly PasswordService _service;
     private ClaimsPrincipal claimsPrincipal;
-    private ApplicationDbContext db;
+    private ApplicationDbContext context;
 
     public PasswordServiceTest()
     {
         claimsPrincipal = TestsConfiguration.GetClaimsPrincipal();
-        db = TestsConfiguration.GetInMemoryDbContext();
+        context = TestsConfiguration.GetInMemoryDbContext();
 
         var passwordsProfile = new PasswordsProfile();
         var mapperConfiguration = new MapperConfiguration(conf => conf.AddProfile(passwordsProfile));
         var mapper = new Mapper(mapperConfiguration);
 
-        _repo = new PasswordRepo(db, claimsPrincipal, mapper);
+        _service = new PasswordService(context, claimsPrincipal, mapper);
 
         PopulateDb();
     }
     
     public void Dispose()
     {
-        var users = db.Users;
-        db.Users.RemoveRange(users);
-        db.SaveChanges();
+        var users = context.Users;
+        context.Users.RemoveRange(users);
+        context.SaveChanges();
 
-        var passwords = db.Passwords;
-        db.Passwords.RemoveRange(passwords);
-        db.SaveChanges();
+        var passwords = context.Passwords;
+        context.Passwords.RemoveRange(passwords);
+        context.SaveChanges();
     }
     
     private void PopulateDb()
@@ -49,14 +48,14 @@ public class PasswordServiceTest : IDisposable
             PasswordHash = "hashedPassword" 
         };
 
-        db.Users.Add(user);
-        db.SaveChanges();
+        context.Users.Add(user);
+        context.SaveChanges();
     }
 
     [Fact]
     public void GetPrepopulatedUsers_ShouldNotBeEmpty()
     {
-        var users = db.Users.ToList();
+        var users = context.Users.ToList();
 
         Assert.NotEmpty(users);
     }
@@ -71,11 +70,11 @@ public class PasswordServiceTest : IDisposable
             Value = "value" 
         };
 
-        var isSuccess = await _repo.AddAsync(passwordCreateDto);
+        var isSuccess = await _service.AddAsync(passwordCreateDto);
 
         Assert.True(isSuccess);
 
-        var passwords = db.Passwords.ToList();
+        var passwords = context.Passwords.ToList();
 
         Assert.NotEmpty(passwords);
     }
@@ -83,7 +82,7 @@ public class PasswordServiceTest : IDisposable
     [Fact]
     public async Task GetAllPasswords_ShouldReturnEmptyCollection()
     {
-        var passwords = await _repo.GetAllAsync();
+        var passwords = await _service.GetAllAsync();
 
         Assert.Empty(passwords);
     }
@@ -102,11 +101,11 @@ public class PasswordServiceTest : IDisposable
             Value = passwordValue
         };
 
-        var isSuccess = await _repo.AddAsync(passwordCreateDto);
+        var isSuccess = await _service.AddAsync(passwordCreateDto);
 
         Assert.True(isSuccess);
 
-        var password = db.Passwords.ToList().FirstOrDefault();
+        var password = context.Passwords.ToList().FirstOrDefault();
 
         Assert.NotNull(password);
         Assert.IsType<Guid>(password!.Id);
@@ -131,16 +130,16 @@ public class PasswordServiceTest : IDisposable
             Value = passwordValue
         };
 
-        var isSuccess = await _repo.AddAsync(passwordCreateDto);
+        var isSuccess = await _service.AddAsync(passwordCreateDto);
 
         Assert.True(isSuccess);
 
-        var addedPassword = (await _repo.GetAllAsync()).FirstOrDefault();
+        var addedPassword = (await _service.GetAllAsync()).FirstOrDefault();
         Assert.NotNull(addedPassword);
 
         var addedPasswordId = addedPassword!.Id;
 
-        var passwordById = await _repo.GetByIdAsync(addedPasswordId);
+        var passwordById = await _service.GetByIdAsync(addedPasswordId);
         Assert.NotNull(passwordById);
         Assert.Equal(addedPassword.Application, passwordById!.ApplicationNormalized);
         Assert.Equal(addedPassword.Login, passwordById!.Login);
@@ -160,10 +159,10 @@ public class PasswordServiceTest : IDisposable
             Value = passwordValue
         };
 
-        var isAdded = await _repo.AddAsync(passwordCreateDto);
+        var isAdded = await _service.AddAsync(passwordCreateDto);
         Assert.True(isAdded);
 
-        var addedPassword = (await _repo.GetAllAsync()).First();
+        var addedPassword = (await _service.GetAllAsync()).First();
 
         var editPasswordApplication = "applicationAfterUpdate";
         var editPasswordLogin = "loginAfterUpdate";
@@ -177,7 +176,7 @@ public class PasswordServiceTest : IDisposable
             Value = editPasswordValue
         };
 
-        var isUpdated = await _repo.EditByIdAsync(editPasswordRequest);
+        var isUpdated = await _service.EditByIdAsync(editPasswordRequest);
         Assert.True(isUpdated);
     }
 }

@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
-using PasswordManager.Data;
+using PasswordManager.Services;
 
 namespace PasswordManager.Tests.Configuration;
 

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PasswordManager.Data;
 using PasswordManager.Responses;
+using PasswordManager.Services.Authentication;
 
 namespace PasswordManager.Controllers;
 
@@ -10,21 +10,18 @@ namespace PasswordManager.Controllers;
 [Route("api/[controller]")]
 public class UserController : ControllerBase 
 {
-    private readonly IUserRepo _userRepo;
+    private readonly IUserService _service;
 
-    public UserController(IUserRepo userRepo)
+    public UserController(IUserService service)
     {
-        _userRepo = userRepo;
+        _service = service;
     }
-
-    [HttpGet]
-    public ActionResult<string?> UserName() => User.Identity?.Name;
 
     [AllowAnonymous]
     [HttpPost("authenticate")]
-    public async Task<ActionResult<AuthenticateResponse>> Authenticate(UserAuthenticateDto authenticateDto, IConfiguration configuration)
+    public async Task<ActionResult<AuthenticateResponse>> Authenticate(UserAuthenticateDto authenticateDto)
     {
-        var response = await _userRepo.Authenticate(authenticateDto, configuration);
+        var response = await _service.Authenticate(authenticateDto);
 
         if (response.IsSuccess) 
             return Ok(response);
@@ -37,7 +34,7 @@ public class UserController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult<RegisterResponse>> Register(UserCreateDto createDto)
     {
-        var response = await _userRepo.Register(createDto);
+        var response = await _service.Register(createDto);
         
         if (response.IsSuccess())
             return Ok(response);

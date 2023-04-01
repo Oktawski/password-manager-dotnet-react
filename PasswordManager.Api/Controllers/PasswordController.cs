@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PasswordManager.Models;
-using PasswordManager.Data;
 using PasswordManager.Dtos;
+using PasswordManager.Services;
 
 namespace PasswordManager.Controllers;
 
@@ -11,29 +11,29 @@ namespace PasswordManager.Controllers;
 [Route("api/[controller]")]
 public class PasswordController : ControllerBase
 {
-    private readonly IPasswordRepo _repository;
+    private readonly IPasswordService _service;
 
-    public PasswordController(IPasswordRepo repository)
+    public PasswordController(IPasswordService service)
     {
-        _repository = repository;
+        _service = service;
     }
 
     [HttpGet("")]
     public async Task<ActionResult<IEnumerable<Password>>> GetAll() 
     {
-        var passwords = await _repository.GetAllAsync();
+        var passwords = await _service.GetAllAsync();
         return passwords.Count() > 0
             ? Ok(passwords)
             : NotFound(passwords);
     }
 
     [HttpGet("{id}")]
-    public async Task<Password?> GetById(string id) => await _repository.GetByIdAsync(new Guid(id));
+    public async Task<Password?> GetById(string id) => await _service.GetByIdAsync(new Guid(id));
 
     [HttpPost]
     public async Task<IActionResult> Add(PasswordCreateDto createDto) 
     {
-        var added = await _repository.AddAsync(createDto);
+        var added = await _service.AddAsync(createDto);
 
         return added 
             ? Ok("Password added") 
@@ -43,7 +43,7 @@ public class PasswordController : ControllerBase
     [HttpPost("edit")]
     public async Task<IActionResult> Edit(PasswordEditDto editDto)
     {
-        var edited = await _repository.EditByIdAsync(editDto);
+        var edited = await _service.EditByIdAsync(editDto);
 
         return edited 
             ? Ok("Password upadted")
@@ -53,7 +53,7 @@ public class PasswordController : ControllerBase
     [HttpDelete("delete/{id}")]
     public async Task<IActionResult> Remove(string id)
     {
-        var removed = await _repository.RemoveAsync(new Guid(id));
+        var removed = await _service.RemoveAsync(new Guid(id));
 
         return removed 
             ? Ok("Password removed") 

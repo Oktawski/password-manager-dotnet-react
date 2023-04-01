@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using PasswordManager.Dtos;
 using PasswordManager.Models;
 
-namespace PasswordManager.Data;
+namespace PasswordManager.Services;
 
-public interface IPasswordRepo
+public interface IPasswordService
 {
     Task<bool> AddAsync(PasswordCreateDto createDto);
     Task<IEnumerable<PasswordReadDto>> GetAllAsync();
@@ -15,30 +15,19 @@ public interface IPasswordRepo
     Task<bool> RemoveAsync(Guid passwordId);
 }
 
-public class PasswordRepo : IPasswordRepo
+public class PasswordService : ClaimsService, IPasswordService
 {
-    private readonly ApplicationDbContext _repository;
-    private readonly ClaimsPrincipal _claimsPrincipal;
+    private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
 
-    public PasswordRepo(
-        ApplicationDbContext repository, 
+    public PasswordService(
+        ApplicationDbContext context, 
         ClaimsPrincipal claimsPrincipal,
         IMapper mapper)
+        : base (claimsPrincipal)
     {
-        _repository = repository;
-        _claimsPrincipal = claimsPrincipal;
+        _context = context;
         _mapper = mapper;
-    }
-
-
-    private string UserId { get => _claimsPrincipal.Claims.First(e => e.Type == "id").Value; }
-
-
-    public void Test()
-    {
-        var buba = _repository.Passwords.Where(e => e.Id == new Guid())
-        .ToList();
     }
 
 
@@ -48,14 +37,14 @@ public class PasswordRepo : IPasswordRepo
 
         password.UserId = UserId;
 
-        await _repository.Passwords.AddAsync(password);
-        var changes = await _repository.SaveChangesAsync();
+        await _context.Passwords.AddAsync(password);
+        var changes = await _context.SaveChangesAsync();
         return changes > 0;
     }
 
     public async Task<IEnumerable<PasswordReadDto>> GetAllAsync()
     {
-        var passwords = await _repository.Passwords
+        var passwords = await _context.Passwords
             .Where(e => e.UserId == UserId)
             .ToListAsync();
 
@@ -64,7 +53,7 @@ public class PasswordRepo : IPasswordRepo
 
     public async Task<Password?> GetByIdAsync(Guid id)
     {
-        var password = await _repository.Passwords.FindAsync(id);
+        var password = await _context.Passwords.FindAsync(id);
         if (password?.UserId == UserId)
             return password;
         
@@ -82,7 +71,7 @@ public class PasswordRepo : IPasswordRepo
         password.Login = editDto.Login;
         password.Value = editDto.Value;
 
-        var changes = await _repository.SaveChangesAsync();
+        var changes = await _context.SaveChangesAsync();
         return changes > 0;
     }
 
@@ -95,9 +84,9 @@ public class PasswordRepo : IPasswordRepo
         if (UserId != passwordToRemove?.UserId)
             return false;
         
-        _repository.Passwords.Remove(passwordToRemove);
+        _context.Passwords.Remove(passwordToRemove);
         
-        var changes = await _repository.SaveChangesAsync();
+        var changes = await _context.SaveChangesAsync();
         return changes > 0;
     }
 }
